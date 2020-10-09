@@ -1,11 +1,10 @@
 # My Personal Project
 
-## A subtitle
+## Project Proposal
 
-A *bulleted* list:
-- item 1
-- item 2
-- item 3
 
-An example of text with **bold** and *italic* fonts.  Note that the IntelliJ markdown previewer doesn't seem to render 
-the bold and italic fonts correctly but they will appear correctly on GitHub.
+*Questions*
+- What will the application do?
+- Who will use it?
+- Why is the project of interest to you?
+
