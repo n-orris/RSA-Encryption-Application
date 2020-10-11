@@ -16,6 +16,7 @@ public class CipherTest {
     @BeforeEach
     void setup() throws Exception {
         cipherObj = new CipherObj();
+        cipherObj.genKeyPair();
         ciphertest = cipherObj.encryptText(testString);
     }
 
@@ -31,7 +32,7 @@ public class CipherTest {
     // Uses same encrypted text used in the first test
     @Test
     void decryptTest() throws Exception {
-        String result = cipherObj.decryptText(ciphertest);
+        byte[] result = cipherObj.decryptText(ciphertest);
         assertEquals(result,testString);
 
     }

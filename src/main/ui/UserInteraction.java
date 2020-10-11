@@ -4,19 +4,35 @@ import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import model.CipherObj;
 import org.w3c.dom.ls.LSOutput;
 
+import javax.crypto.Cipher;
+import javax.xml.bind.DatatypeConverter;
+import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Scanner;
 
 public class UserInteraction {
     private Scanner consoleScanner = new Scanner(System.in);
     private CipherObj cipherObj;
+    private CipherObj test2;
+    private Cipher cipher;
 
 
     public void consoleInput() throws Exception {
-        welcomeArt();
-        keyGenPrompt();
+        //welcomeArt();
+        //keyGenPrompt();
+
+
 
 
     }
+
+
+
+
+
 
 
     public void welcomeArt() {
@@ -93,8 +109,8 @@ public class UserInteraction {
     }
 
     public void viewKeys() {
-        System.out.println("Your public key is:" + cipherObj.stringPublicKey());
-        System.out.println("Your private key is:" + cipherObj.stringPrivateKey());
+        System.out.println(cipherObj.getPublicKey());
+        System.out.println(cipherObj.getPrivateKey());
     }
 
 }
