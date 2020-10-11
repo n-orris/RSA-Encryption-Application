@@ -2,36 +2,37 @@ package model;
 
 
 import javax.crypto.Cipher;
-import javax.xml.bind.DatatypeConverter;
+import javax.crypto.SealedObject;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class CipherObj {
 
-    private static final String ALGO = "RSA";
-    private KeyPairGenerator keyPairGenerator;
-    private SecureRandom secRandom = new SecureRandom();
-    private KeyPair keyPair;
-    private String hexStringKey;
-    private Cipher cipher;
+    private static final String ALGO = "RSA"; // encryption algorithm
+    KeyPair keyPair;
     private PublicKey publicKey;
     private PrivateKey privateKey;
+    private Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");  // Cipher object used to encrypt/decrypt
+    private SealedObject encapsulatedMsg; // holds encrypted message
 
     public CipherObj() throws Exception {
 
     }
 
 
-    //MODIFIES: initializes and generates a pair of public and private keys
-    //EFFECTS:
+    //MODIFIES: this
+    //EFFECTS: Generates an encrypted pair of keys and stores them in keypair,publicKey, and privateKey
     public void genKeyPair() throws NoSuchAlgorithmException {
+        // generates secure random number
+        SecureRandom secRandom = new SecureRandom();
         // Sets the encryption algorithm
-        keyPairGenerator = KeyPairGenerator.getInstance(ALGO);
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGO);
         // initializes keypairgen with key size and cryptographic strength randomness
         keyPairGenerator.initialize(2048, secRandom);
-        // Generates the keyPair
+        // Generates the keyPair and assigns to variables
         keyPair = keyPairGenerator.generateKeyPair();
         publicKey = keyPair.getPublic();
         privateKey = keyPair.getPrivate();
@@ -39,7 +40,11 @@ public class CipherObj {
 
     // Sourced from: https://stackoverflow.com/questions/28204659/how-to-get-public-rsa-key-from-unformatted-string
     // Credit to user @fishi0x01
-    public void createPublicKey(String stringPublicKey,String publicExponent) throws Exception {
+    //REQUIRES: Valid public key modulus and exponent arguments
+    //MODIFIES: this
+    //EFFECTS: creates a public key from modulus and exponent args. assigns the key to the publicKey field and returns
+    //true if key succesfully created/replaced
+    public boolean createPublicKey(String stringPublicKey, String publicExponent) throws Exception {
         try {
             // for key modulus and exponent values as hex and decimal string respectively
 
@@ -49,13 +54,23 @@ public class CipherObj {
             RSAPublicKeySpec keySpeck = new RSAPublicKeySpec(keyInt, exponentInt);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             // Inserts into public key slot
+            CipherObj cipherObj = new CipherObj();
+            cipherObj.genKeyPair();
             publicKey = keyFactory.generatePublic(keySpeck);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    public void createPrivateKey(String stringPrivateKey,String privateExponent) throws Exception {
+    // Sourced from: https://stackoverflow.com/questions/28204659/how-to-get-public-rsa-key-from-unformatted-string
+    // Credit to user @fishi0x01
+    //REQUIRES: valid private key modulus and exponent
+    //MODIFIES: this
+    //EFFECTS: creates a private key from modulus and exponent args. assigns the key to the privateKey field and returns
+    //true if key succesfully created/replaced
+    public boolean createPrivateKey(String stringPrivateKey, String privateExponent) throws Exception {
         try {
             // for key modulus and exponent values as hex and decimal string respectively
 
@@ -66,11 +81,13 @@ public class CipherObj {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             // Inserts into public key slot
             privateKey = keyFactory.generatePrivate(keySpeck);
+
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
-
 
 
     public PublicKey getPublicKey() {
@@ -81,34 +98,48 @@ public class CipherObj {
         return privateKey;
     }
 
-    //REQUIRES
-    //MODIFIES
-    //EFFECTS
-    public byte[] encryptText(String text) throws Exception {
-        cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+    //MODIFIES: this
+    //EFFECTS: initiates cipher into ENCRYPT_MODE with currently stored publickey, creates a SealedObject with
+    //encryption then assigns it to encapsulatedMsg field and returns the object
+    public SealedObject encryptText(String text) throws Exception {
+
         // Creates the cipher obj
-        cipher.init(Cipher.ENCRYPT_MODE, keyPair.getPublic());
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         // Add data to the cipher obj
-        byte[] msg = text.getBytes();
-        cipher.update(msg);
-        // Completes the encryption
-        byte[] ciphertext = cipher.doFinal();
-        return ciphertext;
-
-    }
-
-    //REQUIRES:
-    //MODIFIES:
-    //EFFECTS:
-    public byte[] decryptText(byte[] ciphertext) throws Exception {
-        cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
-        //decrypted text
-        byte[] hexKey = cipher.doFinal(ciphertext);
-        return hexKey;
+        encapsulatedMsg = new SealedObject(text, cipher);
+        return encapsulatedMsg;
     }
 
 
+    //EFFECTS: initiates cipher into DECRYPT_MODE with currently stored private key, unecrypted the sealed object and
+    //stores it in a string variable, returns variable
+    public String decryptText(SealedObject sealedText) throws Exception {
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
+        String msg = (String) sealedText.getObject(cipher);
+
+        return msg;
+    }
+
+    public boolean validPair(PublicKey publicKey, PrivateKey privateKey) throws Exception {
+
+        // create a challenge
+        byte[] challenge = new byte[10000];
+        ThreadLocalRandom.current().nextBytes(challenge);
+
+        // sign using the private key
+        Signature sig = Signature.getInstance("SHA256withRSA");
+        sig.initSign(privateKey);
+        sig.update(challenge);
+        byte[] signature = sig.sign();
+
+        // verify signature using the public key
+        sig.initVerify(publicKey);
+        sig.update(challenge);
+
+
+        return sig.verify(signature);
+    }
 
 
 }

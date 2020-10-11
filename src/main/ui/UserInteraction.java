@@ -5,12 +5,15 @@ import model.CipherObj;
 import org.w3c.dom.ls.LSOutput;
 
 import javax.crypto.Cipher;
+import javax.crypto.SealedObject;
 import javax.xml.bind.DatatypeConverter;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class UserInteraction {
@@ -18,11 +21,13 @@ public class UserInteraction {
     private CipherObj cipherObj;
     private CipherObj test2;
     private Cipher cipher;
+    private List<SealedObject> sealedObjectList = new ArrayList<>();
 
 
     public void consoleInput() throws Exception {
-        //welcomeArt();
-        //keyGenPrompt();
+        welcomeArt();
+        keyGenPrompt();
+
 
 
 
@@ -34,7 +39,7 @@ public class UserInteraction {
 
 
 
-
+    //EFFECTS: prints out key image and welcome text to console
     public void welcomeArt() {
         System.out.println("   ______");
         System.out.println("  /  __  \\     _    _    _   _");
@@ -54,11 +59,13 @@ public class UserInteraction {
 
             if (response.toUpperCase().equals("Y") || response.toUpperCase().equals("YES")) {
                 cipherObj = new CipherObj();
+                cipherObj.genKeyPair();
                 System.out.println("New Public/Private keypair generated");
                 keyOptions();
                 break;
             } else if (response.toUpperCase().equals("N") || response.toUpperCase().equals("NO")) {
                 System.out.println();
+                cipherObj = new CipherObj();
                 keyOptions();
                 break;
             } else {
@@ -95,22 +102,54 @@ public class UserInteraction {
     //EFFECTS:  Takes user message, encrypts it with copherObj instance and displays
     //          encrypted message in console
     public void encrypt() throws Exception {
+        if (cipherObj.getPublicKey() == null) {
+            System.out.println("It appears you dont have a public key stored.");
+            System.out.println("Please enter public key modulus:");
+            String modulus = consoleScanner.nextLine();
+            System.out.println("Please enter public key exponent");
+            String exponent = consoleScanner.nextLine();
+            // creates a public key
+            cipherObj.createPublicKey(modulus,exponent);
+        }
+
         System.out.println("Please enter Message you would like to encrypt:");
         String msg = consoleScanner.nextLine();
 
-        byte[] ciphertext = cipherObj.encryptText(msg);
+        SealedObject ciphertext = cipherObj.encryptText(msg);
+        sealedObjectList.add(ciphertext);
         System.out.println("Your encrypted message is:");
         System.out.println(ciphertext);
+        keyOptions();
     }
 
-    public void decrypt() {
+    public void decrypt() throws Exception {
+        if (cipherObj.getPrivateKey() == null) {
+            System.out.println("It appears you dont have a private key stored.");
+            System.out.println("Please enter private key modulus:");
+            String modulus = consoleScanner.nextLine();
+            System.out.println("Please enter private key exponent");
+            String exponent = consoleScanner.nextLine();
+            // creates a public key
+            cipherObj.createPrivateKey(modulus,exponent);
+
+            System.out.println("Please enter encrypted text");
+            byte[] ciphermsg = consoleScanner.nextLine().getBytes();
+            //System.out.println(cipherObj.decryptText(ciphermsg));
+        }
+
+        for (SealedObject sobj : sealedObjectList) {
+            System.out.println(cipherObj.decryptText(sobj));
+        }
+        keyOptions();
+
 
 
     }
 
-    public void viewKeys() {
+    public void viewKeys() throws Exception {
         System.out.println(cipherObj.getPublicKey());
         System.out.println(cipherObj.getPrivateKey());
+        keyOptions();
     }
 
 }
