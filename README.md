@@ -2,10 +2,10 @@
 
 ## Project Proposal
 
-### The application will
+### *The application*
 
  
-Provide Encryption/Decryption and storage of secure messages, files, and keys.
+Will provide services involving encryption/decryption and storage of secure messages, files, and keys.
 Utilizing the Java Cryptography architecture (JCA) and several external libraries users will be able to:
 
 
@@ -14,12 +14,14 @@ Utilizing the Java Cryptography architecture (JCA) and several external librarie
 - Decrypt messages using private keys
 - store encrypted messages/files
 
-###Who will use it?
-This application will be useful for anyone dealing with confidential information. It will allow for storage and 
-encryption services that can be done offline and stored on the physical computer to limit threat of network based breaches. 
-Simple UX and help section will allow for individuals without Cybersecurity knowledge to make use of this application.   
+### *Who will use it?*
+Whether it be sending emails, protecting your computer files or controlling access & permissions, This application will 
+be useful for anyone dealing with confidential information. It will allow for storage and encryption services that can
+be done offline and stored on the physical computer. This helps people secure information without the risks of associated 
+with online third party encryption providers. A Simple UX and help section will allow for individuals without 
+Cybersecurity knowledge to make use of this application.   
 
-###Interest
+### *Interest*
 
 This project is of interest to me because I am currently work on the business side of a Cybersecurity company and have
 been interested in the subject since a young age. I have previous technical experience through Capture the flag style 
