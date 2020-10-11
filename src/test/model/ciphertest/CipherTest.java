@@ -27,10 +27,23 @@ public class CipherTest {
 
     }
 
+    @Test
+    void constructorTest() {
+        assertEquals(testObj.getPrivateKey(),null);
+        assertEquals(testObj.getPublicKey(),null);
+    }
+
     // Having a known output for an encryption would defeat the point
     // this test therefor makes sure the output encrypt is the expected byte size
     @Test
-    void byteSizeTest() throws Exception {
+    void encryptionTest() throws Exception {
+        testObj.genKeyPair();
+        assertEquals(testObj.encryptText(testString).getClass().getSimpleName(),"SealedObject");
+
+
+
+
+
 
 
     }
