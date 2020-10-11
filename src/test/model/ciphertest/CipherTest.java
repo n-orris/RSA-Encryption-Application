@@ -9,11 +9,6 @@ import javax.crypto.CipherOutputStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
-import java.net.URL;
-import java.nio.file.Files;
-
-import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 
@@ -88,8 +83,11 @@ public class CipherTest {
         Scanner reader = new Scanner(myObj);
 
         // valid key parameters
-        assertTrue(testObj.createPublicKey(reader.nextLine(),reader.nextLine()));  //reader inputs valid public key lines(1-2)
-        assertTrue(testObj.createPrivateKey(reader.nextLine(),reader.nextLine())); //reader inputs valid private key lines(3-4)
+        testObj.createPublicKey(reader.nextLine(),reader.nextLine()); //reader inputs valid public key lines(1-2)
+        assertTrue(testObj.getPublicKey() != null);
+        testObj.createPrivateKey(reader.nextLine(),reader.nextLine()); //reader inputs valid private key lines(3-4)
+        assertTrue(testObj.getPrivateKey() != null);
+
         // advance to needed test lines
         for (int i = 0;i < 2;i++) {
             reader.nextLine();
