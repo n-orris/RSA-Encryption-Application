@@ -35,8 +35,14 @@ public class CipherObj {
     }
 
     //EFFECTS: Converts key to hexBinary and stores it in hexStringKey to allow console output
-    public String stringKey() {
+    public String stringPublicKey() {
         hexStringKey = DatatypeConverter.printHexBinary(keyPair.getPublic().getEncoded());
+        return hexStringKey;
+    }
+
+    //EFFECTS: Converts key to hexBinary and stores it in hexStringKey to allow console output
+    public String stringPrivateKey() {
+        hexStringKey = DatatypeConverter.printHexBinary(keyPair.getPrivate().getEncoded());
         return hexStringKey;
     }
 
