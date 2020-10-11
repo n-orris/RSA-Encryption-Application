@@ -9,6 +9,7 @@ import javax.crypto.CipherOutputStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
+import java.security.PublicKey;
 import java.util.Scanner;
 
 
@@ -26,13 +27,6 @@ public class CipherTest {
         testObj = new CipherObj();
 
     }
-
-    @Test
-    void constructorTest() {
-        assertEquals(testObj.getPrivateKey(),null);
-        assertEquals(testObj.getPublicKey(),null);
-    }
-
     // Having a known output for an encryption would defeat the point
     // this test therefor makes sure the output encrypt is the expected byte size
     @Test
@@ -96,15 +90,15 @@ public class CipherTest {
         Scanner reader = new Scanner(myObj);
 
         // valid key parameters
-        testObj.createPublicKey(reader.nextLine(),reader.nextLine()); //reader inputs valid public key lines(1-2)
-        assertTrue(testObj.getPublicKey() != null);
-        testObj.createPrivateKey(reader.nextLine(),reader.nextLine()); //reader inputs valid private key lines(3-4)
-        assertTrue(testObj.getPrivateKey() != null);
-
+        assertTrue(testObj.createPublicKey(reader.nextLine(),reader.nextLine())); //reader inputs valid public key lines(1-2)
+        assertTrue(testObj.createPrivateKey(reader.nextLine(),reader.nextLine()));
         // advance to needed test lines
         for (int i = 0;i < 2;i++) {
             reader.nextLine();
         }
+        assertFalse(testObj.createPublicKey(reader.nextLine(),reader.nextLine())); //reader inputs valid public key lines(1-2)
+        assertFalse(testObj.createPrivateKey(reader.nextLine(),reader.nextLine()));
+
     }
 }
 
