@@ -20,33 +20,11 @@ public class CipherTest {
     CipherObj testObj;
     SealedObject ciphertext;
     private String testString = "test 323lfdsn";
-    CipherOutputStream cipherOutputStream;
     File myObj = new File("C:\\Users\\taran\\210 Project\\src\\test\\model\\ciphertest\\data.txt"); //test data
-    private String pubKey;
-    private String privMod;
-    private String privExp;
-    private String pubKey2;
-    private String privMod2;
-    private String privExp2;
-    private String invalidPub;
-    private String invalidPrivMod;
-    private String invalidPrivExp;
-
 
     @BeforeEach
     void setup() throws Exception {
         testObj = new CipherObj();
-        Scanner reader = new Scanner(myObj);
-        // test key data
-        pubKey = reader.nextLine();
-        privMod = reader.nextLine();
-        privExp = reader.nextLine();
-        pubKey2 = reader.nextLine();
-        privMod2 = reader.nextLine();
-        privExp2 = reader.nextLine();
-        invalidPub = reader.nextLine();
-        invalidPrivMod = reader.nextLine();
-        invalidPrivExp = reader.nextLine();
     }
 
     // Having a known output for an encryption would defeat the point
@@ -84,6 +62,17 @@ public class CipherTest {
 
     @Test
     void createKeyTest() throws Exception {
+        Scanner reader = new Scanner(myObj);
+        // test key data
+        String pubKey = reader.nextLine();
+        String privMod = reader.nextLine();
+        String privExp = reader.nextLine();
+        String pubKey2 = reader.nextLine();
+        String privMod2 = reader.nextLine();
+        String privExp2 = reader.nextLine();
+        String invalidPub = reader.nextLine();
+        String invalidPrivMod = reader.nextLine();
+        String invalidPrivExp = reader.nextLine();
         //keys imported from ciphertest\data.txt
         //valid key creations
         assertTrue(testObj.createPublicKey(pubKey));
@@ -97,17 +86,28 @@ public class CipherTest {
     // checks to make sure it will only validate keys that are a pair.
     @Test
     void validPairTest() throws Exception {
+        Scanner reader = new Scanner(myObj);
+        // test key data
+        String pubKey = reader.nextLine();
+        String privMod = reader.nextLine();
+        String privExp = reader.nextLine();
+        String pubKey2 = reader.nextLine();
+        String privMod2 = reader.nextLine();
+        String privExp2 = reader.nextLine();
+        String invalidPub = reader.nextLine();
+        String invalidPrivMod = reader.nextLine();
+        String invalidPrivExp = reader.nextLine();
         //key pairings imported from ciphertest\data.txt
         // valid key pair test
         testObj.createPrivateKey(privMod, privExp);
         testObj.createPublicKey(pubKey);
-        PublicKey pubKey = testObj.getPublicKey();
+        PublicKey pubKey1 = testObj.getPublicKey();
         PrivateKey privKey = testObj.getPrivateKey();
-        assertTrue(testObj.validPair(pubKey, privKey));
+        assertTrue(testObj.validPair(pubKey1, privKey));
         // Invalid Key pair
         testObj.createPrivateKey(privMod2, privExp2);
         PrivateKey privKey2 = testObj.getPrivateKey();  //different priv key
-        assertFalse(testObj.validPair(pubKey, privKey2));
+        assertFalse(testObj.validPair(pubKey1, privKey2));
 
     }
 }
