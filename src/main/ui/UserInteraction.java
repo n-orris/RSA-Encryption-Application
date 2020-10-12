@@ -100,10 +100,8 @@ public class UserInteraction {
             System.out.println("It appears you dont have a public key stored.");
             System.out.println("Please enter public key modulus:");
             String modulus = consoleScanner.nextLine();
-            System.out.println("Please enter public key exponent");
-            String exponent = consoleScanner.nextLine();
             // creates a public key
-            cipherObj.createPublicKey(modulus,exponent);
+            cipherObj.createPublicKey(modulus);
         }
 
         System.out.println("Please enter Message you would like to encrypt:");

@@ -2,15 +2,17 @@ package model.ciphertest;
 
 import model.CipherObj;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 
-import javax.crypto.SealedObject;
 import javax.crypto.CipherOutputStream;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.*;
+import javax.crypto.SealedObject;
+import java.io.File;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Scanner;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class CipherTest {
@@ -20,26 +22,39 @@ public class CipherTest {
     private String testString = "test 323lfdsn";
     CipherOutputStream cipherOutputStream;
     File myObj = new File("C:\\Users\\taran\\210 Project\\src\\test\\model\\ciphertest\\data.txt"); //test data
+    private String pubKey;
+    private String privMod;
+    private String privExp;
+    private String pubKey2;
+    private String privMod2;
+    private String privExp2;
+    private String invalidPub;
+    private String invalidPrivMod;
+    private String invalidPrivExp;
 
 
     @BeforeEach
     void setup() throws Exception {
         testObj = new CipherObj();
-
+        Scanner reader = new Scanner(myObj);
+        // test key data
+        pubKey = reader.nextLine();
+        privMod = reader.nextLine();
+        privExp = reader.nextLine();
+        pubKey2 = reader.nextLine();
+        privMod2 = reader.nextLine();
+        privExp2 = reader.nextLine();
+        invalidPub = reader.nextLine();
+        invalidPrivMod = reader.nextLine();
+        invalidPrivExp = reader.nextLine();
     }
+
     // Having a known output for an encryption would defeat the point
     // this test therefor makes sure the output encrypt is the expected byte size
     @Test
     void encryptionTest() throws Exception {
         testObj.genKeyPair();
-        assertEquals(testObj.encryptText(testString).getClass().getSimpleName(),"SealedObject");
-
-
-
-
-
-
-
+        assertEquals(testObj.encryptText(testString).getClass().getSimpleName(), "SealedObject");
     }
 
     // Uses same encrypted text used in the first test
@@ -67,40 +82,37 @@ public class CipherTest {
     }
 
 
+    @Test
+    void createKeyTest() throws Exception {
+        //keys imported from ciphertest\data.txt
+        //valid key creations
+        assertTrue(testObj.createPublicKey(pubKey));
+        assertTrue(testObj.createPrivateKey(privMod, privExp));
+        // Invalid Test
+        assertFalse(testObj.createPublicKey(invalidPub));
+        assertFalse(testObj.createPrivateKey(invalidPrivMod, invalidPrivExp));
+
+    }
+
     // checks to make sure it will only validate keys that are a pair.
     @Test
     void validPairTest() throws Exception {
         //key pairings imported from ciphertest\data.txt
-        Scanner reader = new Scanner(myObj);
-
         // valid key pair test
-        testObj.createPublicKey(reader.nextLine(),reader.nextLine());  //reader inputs valid public key lines(1-2)
-        testObj.createPrivateKey(reader.nextLine(),reader.nextLine()); //reader inputs valid private key lines(3-4)
-        assertTrue(testObj.validPair(testObj.getPublicKey(),testObj.getPrivateKey()));
-        // Invalid key test (different public/private key modulus
-        testObj.createPublicKey(reader.nextLine(),reader.nextLine());  //reader inputs valid public key lines(5-6)
-        testObj.createPrivateKey(reader.nextLine(),reader.nextLine()); //reader inputs valid private key lines(7-8)
-        //assertFalse(testObj.validPair(testObj.getPublicKey(),testObj.getPrivateKey()));
-
-    }
-
-    @Test
-    void createKeyTest() throws Exception {
-        //keys imported from ciphertest\data.txt
-        Scanner reader = new Scanner(myObj);
-
-        // valid key parameters
-        assertTrue(testObj.createPublicKey(reader.nextLine(),reader.nextLine())); //reader inputs valid public key lines(1-2)
-        assertTrue(testObj.createPrivateKey(reader.nextLine(),reader.nextLine()));
-        // advance to needed test lines
-        for (int i = 0;i < 2;i++) {
-            reader.nextLine();
-        }
-        assertFalse(testObj.createPublicKey(reader.nextLine(),reader.nextLine())); //reader inputs valid public key lines(1-2)
-        assertFalse(testObj.createPrivateKey(reader.nextLine(),reader.nextLine()));
+        testObj.createPrivateKey(privMod, privExp);
+        testObj.createPublicKey(pubKey);
+        PublicKey pubKey = testObj.getPublicKey();
+        PrivateKey privKey = testObj.getPrivateKey();
+        assertTrue(testObj.validPair(pubKey, privKey));
+        // Invalid Key pair
+        testObj.createPrivateKey(privMod2, privExp2);
+        PrivateKey privKey2 = testObj.getPrivateKey();  //different priv key
+        assertFalse(testObj.validPair(pubKey, privKey2));
 
     }
 }
+
+
 
 
 

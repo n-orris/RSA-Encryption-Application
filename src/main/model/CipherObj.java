@@ -44,20 +44,23 @@ public class CipherObj {
     //MODIFIES: this
     //EFFECTS: creates a public key from modulus and exponent args. assigns the key to the publicKey field and returns
     //true if key succesfully created/replaced
-    public boolean createPublicKey(String stringPublicKey, String publicExponent) throws Exception {
-        if (stringPublicKey.length() == 617 && publicExponent.equals("65537")) {
-
+    public boolean createPublicKey(String stringPublicKey) throws Exception {
+        try {
+            if (stringPublicKey.length() != 617) {
+                return false;
+            }
             BigInteger keyInt = new BigInteger(stringPublicKey, 10); // hex base
-            BigInteger exponentInt = new BigInteger(publicExponent, 10); // decimal base
+            BigInteger exponentInt = new BigInteger("65537", 10); // decimal base
 
             RSAPublicKeySpec keySpeck = new RSAPublicKeySpec(keyInt, exponentInt);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             // Inserts into public key slot
             publicKey = keyFactory.generatePublic(keySpeck);
             return true;
-        } else {
-            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
     // Sourced from: https://stackoverflow.com/questions/28204659/how-to-get-public-rsa-key-from-unformatted-string
@@ -66,9 +69,11 @@ public class CipherObj {
     //MODIFIES: this
     //EFFECTS: creates a private key from modulus and exponent args. assigns the key to the privateKey field and returns
     //true if key succesfully created/replaced
-    public Boolean createPrivateKey(String stringPrivateKey, String privateExponent) throws Exception {
-        // for key modulus and exponent values as hex and decimal string respectively
-        if (stringPrivateKey.length() == 617 && privateExponent.length() == 617) {
+    public boolean createPrivateKey(String stringPrivateKey, String privateExponent) throws Exception {
+        try {
+            if (stringPrivateKey.length() != 617 || privateExponent.length() != 617) {
+                return false;
+            }
 
             BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
             BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
@@ -78,9 +83,10 @@ public class CipherObj {
             // Inserts into public key slot
             privateKey = keyFactory.generatePrivate(keySpeck);
             return true;
-        } else {
-            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
 
@@ -91,6 +97,7 @@ public class CipherObj {
     public PrivateKey getPrivateKey() {
         return privateKey;
     }
+
 
     //MODIFIES: this
     //EFFECTS: initiates cipher into ENCRYPT_MODE with currently stored publickey, creates a SealedObject with
