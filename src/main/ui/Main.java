@@ -5,9 +5,7 @@ public class Main {
 
 
         UserInteraction userInteraction = new UserInteraction();
-
         userInteraction.consoleInput();
-
 
     }
 

@@ -45,10 +45,8 @@ public class CipherObj {
     //EFFECTS: creates a public key from modulus and exponent args. assigns the key to the publicKey field and returns
     //true if key succesfully created/replaced
     public boolean createPublicKey(String stringPublicKey) throws Exception {
-        try {
-            if (stringPublicKey.length() != 617) {
-                return false;
-            }
+
+        if (stringPublicKey.length() == 617) {
             BigInteger keyInt = new BigInteger(stringPublicKey, 10); // hex base
             BigInteger exponentInt = new BigInteger("65537", 10); // decimal base
 
@@ -57,10 +55,9 @@ public class CipherObj {
             // Inserts into public key slot
             publicKey = keyFactory.generatePublic(keySpeck);
             return true;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            return false;
         }
-        return false;
     }
 
     // Sourced from: https://stackoverflow.com/questions/28204659/how-to-get-public-rsa-key-from-unformatted-string
@@ -70,11 +67,7 @@ public class CipherObj {
     //EFFECTS: creates a private key from modulus and exponent args. assigns the key to the privateKey field and returns
     //true if key succesfully created/replaced
     public boolean createPrivateKey(String stringPrivateKey, String privateExponent) throws Exception {
-        try {
-            if (stringPrivateKey.length() != 617 || privateExponent.length() != 617) {
-                return false;
-            }
-
+        if (stringPrivateKey.length() == 617 || privateExponent.length() == 617) {
             BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
             BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
 
@@ -83,10 +76,9 @@ public class CipherObj {
             // Inserts into public key slot
             privateKey = keyFactory.generatePrivate(keySpeck);
             return true;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            return false;
         }
-        return false;
     }
 
 
