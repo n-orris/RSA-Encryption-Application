@@ -15,6 +15,10 @@ public class SealedObjectData {
         cipherObj.genKeyPair();
     }
 
+    public void inputSealedObject() {
+
+    }
+
     //REQUIRES: Non Null input
     //MODIFIES: sealedobj.txt file
     //EFFECTS: writes sealedobject list to output file
