@@ -21,10 +21,30 @@ public class CipherTest {
     SealedObject ciphertext;
     private String testString = "test 323lfdsn";
     File myObj = new File("C:\\Users\\taran\\210 Project\\src\\test\\model\\ciphertest\\data.txt"); //test data
+    String pubKey;
+    String privMod;
+    String privExp;
+    String pubKey2;
+    String privMod2;
+    String privExp2;
+    String invalidPub;
+    String invalidPrivMod;
+    String invalidPrivExp;
 
     @BeforeEach
     void setup() throws Exception {
         testObj = new CipherObj();
+        Scanner reader = new Scanner(myObj);
+        // test key data
+        pubKey = reader.nextLine();
+        privMod = reader.nextLine();
+        privExp = reader.nextLine();
+        pubKey2 = reader.nextLine();
+        privMod2 = reader.nextLine();
+        privExp2 = reader.nextLine();
+        invalidPub = reader.nextLine();
+        invalidPrivMod = reader.nextLine();
+        invalidPrivExp = reader.nextLine();
     }
 
     // Having a known output for an encryption would defeat the point
@@ -53,7 +73,7 @@ public class CipherTest {
 
     // checks if valid keyPair has been generated
     @Test
-    void keyGenTest() throws Exception {
+    void keyGenTest()  {
         testObj.genKeyPair();
         boolean valid = testObj.validPair(testObj.getPublicKey(), testObj.getPrivateKey());
         assertTrue(valid);
@@ -62,24 +82,19 @@ public class CipherTest {
 
     @Test
     void createKeyTest() throws Exception {
-        Scanner reader = new Scanner(myObj);
-        // test key data
-        String pubKey = reader.nextLine();
-        String privMod = reader.nextLine();
-        String privExp = reader.nextLine();
-        String pubKey2 = reader.nextLine();
-        String privMod2 = reader.nextLine();
-        String privExp2 = reader.nextLine();
-        String invalidPub = reader.nextLine();
-        String invalidPrivMod = reader.nextLine();
-        String invalidPrivExp = reader.nextLine();
+
         //keys imported from ciphertest\data.txt
         //valid key creations
-        assertTrue(testObj.createPublicKey(pubKey));
-        assertTrue(testObj.createPrivateKey(privMod, privExp));
+        testObj.createPublicKey(pubKey);
+        testObj.createPrivateKey(privMod,privExp);
+        assertTrue(testObj.getPublicKey() != null);
+        assertTrue(testObj.getPrivateKey() != null);
         // Invalid Test
-        assertFalse(testObj.createPublicKey(invalidPub));
-        assertFalse(testObj.createPrivateKey(invalidPrivMod, invalidPrivExp));
+        CipherObj testObj2 = new CipherObj();
+        testObj2.createPublicKey(invalidPub);
+        testObj2.createPrivateKey(invalidPrivMod,invalidPrivExp);
+        assertFalse(testObj2.getPublicKey() != null);
+        assertFalse(testObj2.getPrivateKey() != null);
 
     }
 
@@ -108,7 +123,6 @@ public class CipherTest {
         testObj.createPrivateKey(privMod2, privExp2);
         PrivateKey privKey2 = testObj.getPrivateKey();  //different priv key
         assertFalse(testObj.validPair(pubKey1, privKey2));
-
     }
 }
 
