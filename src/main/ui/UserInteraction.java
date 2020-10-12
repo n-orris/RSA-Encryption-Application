@@ -1,8 +1,9 @@
 package ui;
 
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import model.CipherObj;
-
+import model.SealedObjectData;
 
 import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
@@ -16,22 +17,23 @@ public class UserInteraction {
     private CipherObj test2;
     private Cipher cipher;
     private List<SealedObject> sealedObjectList = new ArrayList<>();
+    private SealedObjectData sealedObjectData;
 
 
     public void consoleInput() throws Exception {
-        welcomeArt();
-        keyGenPrompt();
-
-
-
+        //welcomeArt();
+        //initiateCipherObject();
+        sealedObjectData = new SealedObjectData();
+        cipherObj = new CipherObj();
+        cipherObj.genKeyPair();
+        SealedObject test = cipherObj.encryptText("ggdfdgfd");
+        SealedObject test2 = cipherObj.encryptText("test encrypt");
+        sealedObjectList.add(test);
+        sealedObjectList.add(test2);
+        sealedObjectData.outputSealedObject(sealedObjectList);
 
 
     }
-
-
-
-
-
 
     //EFFECTS: prints out key image and welcome text to console
     public void welcomeArt() {
@@ -43,53 +45,113 @@ public class UserInteraction {
         System.out.println();
         System.out.println("-------WELCOME TO ULOCK-------");
         System.out.println();
+        System.out.println("Options:");
+        System.out.println("1: Generate new keypair");
+        System.out.println("2: Enter existing keypair");
+        System.out.println("3: Encrypt with public key");
+        System.out.println("4: Decrypt with private key");
+        System.out.println();
+        System.out.println("Select an option 1-4:");
     }
 
-    public void keyGenPrompt() throws Exception {
-        System.out.println("Would you like to generate a new keyset? (Y/N):");
-        while (true) {
-            // Takes user string input
-            String response = consoleScanner.nextLine();
-
-            if (response.toUpperCase().equals("Y") || response.toUpperCase().equals("YES")) {
-                cipherObj = new CipherObj();
-                cipherObj.genKeyPair();
-                System.out.println("New Public/Private keypair generated");
-                keyOptions();
-                break;
-            } else if (response.toUpperCase().equals("N") || response.toUpperCase().equals("NO")) {
-                System.out.println();
-                cipherObj = new CipherObj();
-                keyOptions();
-                break;
-            } else {
-                System.out.println("Please enter either Y or N");
-            }
-        }
-    }
-
-    public void keyOptions() throws Exception {
-        System.out.println();
-        System.out.println("Options: ");
-        System.out.println("1: Encrypt Message ");
-        System.out.println("2: Decrypt Message ");
-        System.out.println("3: View your Keys");
-        System.out.println();
-        System.out.println("Please select a number:");
-
-        int choice = consoleScanner.nextInt();
+    //REQUIRES
+    public void initiateCipherObject() throws Exception {
+        //inititate cipher object for this session
+        cipherObj = new CipherObj();
+        // Takes user input
+        int num = consoleScanner.nextInt();
         consoleScanner.nextLine();
 
-        // Encrypts text and then outputs encryption to console
-        if (choice == 1 && cipherObj != null) {
-            encrypt();
-        } else if (choice == 2) {
-            decrypt();
-        } else if (choice == 3 && cipherObj != null) {
-            viewKeys();
-        } else {
-            System.out.println("Invalid Number, program ending");
+        if (num == 1) {
+            genKeyOption();
+        } else if (num == 2) {
+            existingKeypair();
+        } else if (num == 3) {
+            encryptWithPublic();
+        } else if (num == 4) {
+            decryptWithPrivate();
         }
+    }
+
+    public void genKeyOption() {
+        cipherObj.genKeyPair();
+        System.out.println("New Public/Private keypair generated");
+        keyOptions();
+    }
+
+    public void existingKeypair() throws Exception {
+        System.out.println("Enter public key Modulus:");
+        String pubKey = consoleScanner.nextLine();
+        System.out.println("Enter Private Key modulus:");
+        String privMod = consoleScanner.nextLine();
+        System.out.println("Enter private key exponent:");
+        String privExp = consoleScanner.nextLine();
+        cipherObj.createPublicKey(pubKey);
+        cipherObj.createPrivateKey(privMod,privExp);
+        if (cipherObj.validPair(cipherObj.getPublicKey(),cipherObj.getPrivateKey())) {
+            System.out.println("Keypair succesfully added");
+            keyOptions();
+        } else {
+            System.out.println("ERROR: Invalid keypair");
+            initiateCipherObject();
+        }
+    }
+
+    //REQUIRES: Valid RSA public key modulus (617 char hexstring)
+    //MODIFIES: creates and inserts public key into cipherObj
+    //EFFECTS:
+
+    public void encryptWithPublic() throws Exception {
+        System.out.println("Please enter public modulus for encryption");
+        String pubKey = consoleScanner.nextLine();
+        System.out.println("Plese Enter message to encrypt:");
+        String plainText = consoleScanner.nextLine();
+        cipherObj.createPublicKey(pubKey);
+        cipherObj.encryptText(plainText);
+        keyOptions();
+    }
+
+    public void decryptWithPrivate() {
+        System.out.println("Enter private key modulus:");
+        String privMod = consoleScanner.nextLine();
+        System.out.println("Enter private key exponent:");
+        String privExp = consoleScanner.nextLine();
+        System.out.println("Enter encrypted message");
+        byte[] cipherText = consoleScanner.nextLine().getBytes();
+        keyOptions();
+    }
+
+    public void keyOptions() {
+        try {
+            optionsText();
+            int choice = consoleScanner.nextInt();
+            consoleScanner.nextLine();
+
+            if (choice == 1) {
+                encrypt();
+            } else if (choice == 2) {
+                decrypt();
+            } else if (choice == 3) {
+                viewKeys();
+            } else if (choice == 4) {
+                System.out.println();
+            } else {
+                System.out.println("Invalid Number, program ending");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void optionsText() {
+        System.out.println();
+        System.out.println("Options: ");
+        System.out.println("1: Encrypt Message");
+        System.out.println("2: Decrypt Message");
+        System.out.println("3: View your Keys");
+        System.out.println("4: Create Account");
+        System.out.println();
+        System.out.println("Please select a number:");
     }
 
     //MODIFIES: Assigns encrypted value to cipherObj instance
@@ -122,7 +184,7 @@ public class UserInteraction {
             System.out.println("Please enter private key exponent");
             String exponent = consoleScanner.nextLine();
             // creates a public key
-            cipherObj.createPrivateKey(modulus,exponent);
+            cipherObj.createPrivateKey(modulus, exponent);
 
             System.out.println("Please enter encrypted text");
             byte[] ciphermsg = consoleScanner.nextLine().getBytes();
@@ -135,7 +197,6 @@ public class UserInteraction {
         keyOptions();
 
 
-
     }
 
     public void viewKeys() throws Exception {
@@ -145,6 +206,7 @@ public class UserInteraction {
     }
 
 }
+
 
 
 
