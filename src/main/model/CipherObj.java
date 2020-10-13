@@ -117,7 +117,6 @@ public class CipherObj {
         return null;
     }
 
-
     //EFFECTS: initiates cipher into DECRYPT_MODE with currently stored private key, unecrypted the sealed object and
     //stores it in a string variable, returns variable
     public String decryptText(SealedObject sealedText) {
