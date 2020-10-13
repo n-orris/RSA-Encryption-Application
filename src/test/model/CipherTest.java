@@ -111,6 +111,7 @@ public class CipherTest {
                 "7601515759042967180724673255548941686110233074732245171778266640024165472407820265185940251273897708" +
                 "5308861658829054811512252262105836471552671848210019145643287660478414488388546964922713836442903453" +
                 "90746919333326389404681";
+        assertNull(testObj.createPublicKey(null));
         PublicKey publicKey = testObj.createPublicKey(bbb);
         assertNull(testObj.createPublicKey("Fdsffdsaf"));
         assertNotNull(testObj.createPublicKey(bbb));
@@ -122,6 +123,7 @@ public class CipherTest {
     @Test
     void createPrivateKeyTest() throws Exception {
         Scanner reader = new Scanner(myObj);
+        CipherObj testObj2 = new CipherObj();
         // test key data
         pubKey = reader.nextLine();
         privMod = reader.nextLine();
@@ -133,8 +135,14 @@ public class CipherTest {
         invalidPrivMod = reader.nextLine();
         invalidPrivExp = reader.nextLine();
 
-        testObj.createPrivateKey(privMod, privExp);
+        assertNull(testObj.createPrivateKey(null, "33243"));
+        assertNull(testObj.createPrivateKey("Fdsffdsaf", "43253"));
+        testObj.createPublicKey(pubKey);
+        assertNotNull(testObj.createPrivateKey(privMod, privExp));
         assertNotNull(testObj.getPrivateKey());
+        SealedObject test = testObj.encryptText("Test");
+        assertNotNull(testObj.decryptText(test));
+        assertNull(testObj2.decryptText(test));
     }
 
     @Test

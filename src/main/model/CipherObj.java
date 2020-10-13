@@ -126,11 +126,16 @@ public class CipherObj {
     //EFFECTS: initiates cipher into DECRYPT_MODE with currently stored private key, unecrypted the sealed object and
     //stores it in a string variable, returns variable
     public String decryptText(SealedObject sealedText) throws Exception {
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
-        String msg = (String) sealedText.getObject(cipher);
+        if (privateKey != null) {
 
-        return msg;
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+            String msg = (String) sealedText.getObject(cipher);
+
+            return msg;
+        }
+        return null;
     }
 
 
