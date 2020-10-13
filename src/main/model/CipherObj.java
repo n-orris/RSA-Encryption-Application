@@ -16,6 +16,10 @@ public class CipherObj {
     private PrivateKey privateKey;
     private Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");  // Cipher object used to encrypt/decrypt
     private SealedObject encapsulatedMsg; // holds encrypted message
+    private RSAPublicKeySpec keySpeckPub;
+    private RSAPrivateKeySpec keySpecPriv;
+    private KeyFactory keyFactory;
+    private KeyFactory keyFactoryPriv;
 
     public CipherObj() throws Exception {
 
@@ -51,10 +55,10 @@ public class CipherObj {
         if (stringPublicKey.length() == 617) {
             BigInteger keyInt = new BigInteger(stringPublicKey, 10); // hex base
             BigInteger exponentInt = new BigInteger("65537", 10); // decimal base
-            RSAPublicKeySpec keySpeck = new RSAPublicKeySpec(keyInt, exponentInt);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            keySpeckPub = new RSAPublicKeySpec(keyInt, exponentInt);
+            keyFactory = KeyFactory.getInstance("RSA");
             // Inserts into public key slot
-            publicKey = keyFactory.generatePublic(keySpeck);
+            publicKey = keyFactory.generatePublic(keySpeckPub);
             return publicKey;
         }
         return null;
@@ -70,10 +74,10 @@ public class CipherObj {
         if (stringPrivateKey.length() == 617 || privateExponent.length() == 617) {
             BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
             BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
-            RSAPrivateKeySpec keySpeck = new RSAPrivateKeySpec(keyInt, exponentInt);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            keySpecPriv = new RSAPrivateKeySpec(keyInt, exponentInt);
+            keyFactoryPriv = KeyFactory.getInstance("RSA");
             // Inserts into public key slot
-            privateKey = keyFactory.generatePrivate(keySpeck);
+            privateKey = keyFactoryPriv.generatePrivate(keySpecPriv);
             return privateKey;
         }
         return null;
