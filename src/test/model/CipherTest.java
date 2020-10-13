@@ -102,18 +102,8 @@ public class CipherTest {
 
     @Test
     void createPublicKeyTest() throws Exception {
-        CipherObj testobj2 = new CipherObj();
-        Scanner reader = new Scanner(myObj);
-        // test key data
-        pubKey = reader.nextLine();
-        privMod = reader.nextLine();
-        privExp = reader.nextLine();
-        pubKey2 = reader.nextLine();
-        privMod2 = reader.nextLine();
-        privExp2 = reader.nextLine();
-        invalidPub = reader.nextLine();
-        invalidPrivMod = reader.nextLine();
-        invalidPrivExp = reader.nextLine();
+
+        CipherObj cObj = new CipherObj();
         String bbb = "249292008192106653555642295197979900235908923957335763593030527966577820204510150521431125072197" +
                 "728392407607589157635707866607824863444659217351002904265085768041043979122470762307186702660972949" +
                 "8239147433588448008766293209987542157686706073316270046166191645801704549728728028979309356387111112" +
@@ -121,12 +111,12 @@ public class CipherTest {
                 "7601515759042967180724673255548941686110233074732245171778266640024165472407820265185940251273897708" +
                 "5308861658829054811512252262105836471552671848210019145643287660478414488388546964922713836442903453" +
                 "90746919333326389404681";
-        String nll = null;
-        assertNull(testObj.createPublicKey(nll));
-
-        assertNotNull(testobj2.createPublicKey(bbb));
         PublicKey publicKey = testObj.createPublicKey(bbb);
-        assertNotNull(publicKey);
+        assertNull(testObj.createPublicKey("Fdsffdsaf"));
+        assertNotNull(testObj.createPublicKey(bbb));
+        cObj.createPublicKey("dsafwdsds");
+        assertNotNull(testObj.encryptText("tttest"));
+        assertNull(cObj.encryptText("test"));
     }
 
     @Test

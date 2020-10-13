@@ -68,6 +68,8 @@ public class CipherObj {
     //MODIFIES: this
     //EFFECTS: creates a private key from modulus and exponent args. assigns the key to the privateKey field and returns
     //true if key succesfully created/replaced
+
+
     public PrivateKey createPrivateKey(String stringPrivateKey, String privateExponent) throws Exception {
 
         if (stringPrivateKey == null) {
@@ -112,10 +114,13 @@ public class CipherObj {
     public SealedObject encryptText(String text) throws IOException, IllegalBlockSizeException, InvalidKeyException {
 
         // Creates the cipher obj
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        // Add data to the cipher obj
-        encapsulatedMsg = new SealedObject(text, cipher);
-        return encapsulatedMsg;
+        if (publicKey != null) {
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            // Add data to the cipher obj
+            encapsulatedMsg = new SealedObject(text, cipher);
+            return encapsulatedMsg;
+        }
+        return null;
     }
 
     //EFFECTS: initiates cipher into DECRYPT_MODE with currently stored private key, unecrypted the sealed object and
