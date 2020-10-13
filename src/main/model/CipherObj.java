@@ -1,6 +1,5 @@
 package model;
 
-
 import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
 import java.math.BigInteger;
@@ -48,18 +47,17 @@ public class CipherObj {
     //MODIFIES: this
     //EFFECTS: creates a public key from modulus and exponent args. assigns the key to the publicKey field and returns
     //true if key succesfully created/replaced
-    public void createPublicKey(String stringPublicKey) throws Exception {
-
-
-        BigInteger keyInt = new BigInteger(stringPublicKey, 10); // hex base
-        BigInteger exponentInt = new BigInteger("65537", 10); // decimal base
-
-        RSAPublicKeySpec keySpeck = new RSAPublicKeySpec(keyInt, exponentInt);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        // Inserts into public key slot
-        publicKey = keyFactory.generatePublic(keySpeck);
-
-
+    public PublicKey createPublicKey(String stringPublicKey) throws Exception {
+        if (stringPublicKey.length() == 617) {
+            BigInteger keyInt = new BigInteger(stringPublicKey, 10); // hex base
+            BigInteger exponentInt = new BigInteger("65537", 10); // decimal base
+            RSAPublicKeySpec keySpeck = new RSAPublicKeySpec(keyInt, exponentInt);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            // Inserts into public key slot
+            publicKey = keyFactory.generatePublic(keySpeck);
+            return publicKey;
+        }
+        return null;
     }
 
     // Sourced from: https://stackoverflow.com/questions/28204659/how-to-get-public-rsa-key-from-unformatted-string
@@ -68,16 +66,17 @@ public class CipherObj {
     //MODIFIES: this
     //EFFECTS: creates a private key from modulus and exponent args. assigns the key to the privateKey field and returns
     //true if key succesfully created/replaced
-    public void createPrivateKey(String stringPrivateKey, String privateExponent) throws Exception {
-
-        BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
-        BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
-
-        RSAPrivateKeySpec keySpeck = new RSAPrivateKeySpec(keyInt, exponentInt);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        // Inserts into public key slot
-        privateKey = keyFactory.generatePrivate(keySpeck);
-
+    public PrivateKey createPrivateKey(String stringPrivateKey, String privateExponent) throws Exception {
+        if (stringPrivateKey.length() == 617 || privateExponent.length() == 617) {
+            BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
+            BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
+            RSAPrivateKeySpec keySpeck = new RSAPrivateKeySpec(keyInt, exponentInt);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            // Inserts into public key slot
+            privateKey = keyFactory.generatePrivate(keySpeck);
+            return privateKey;
+        }
+        return null;
     }
 
 

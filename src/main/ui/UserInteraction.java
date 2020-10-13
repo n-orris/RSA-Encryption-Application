@@ -23,18 +23,15 @@ public class UserInteraction {
     public void consoleInput() throws Exception {
         welcomeArt();
         initiateCipherObject();
-        cipherObj = new CipherObj();
-        cipherObj.genKeyPair();
-        sealedObjectData = new SealedObjectData();
-        SealedObject test = cipherObj.encryptText("ggdfdgfd");
-        SealedObject test2 = cipherObj.encryptText("test encrypt");
-        sealedObjectList.add(test);
-        sealedObjectList.add(test2);
+        //cipherObj = new CipherObj();
+        //cipherObj.genKeyPair();
+        //sealedObjectData = new SealedObjectData();
+        //SealedObject test = cipherObj.encryptText("ggdfdgfd");
+        //SealedObject test2 = cipherObj.encryptText("test encrypt");
+        //sealedObjectList.add(test);
+        //sealedObjectList.add(test2);
         //sealedObjectData.outputSealedObject(sealedObjectList);
         //sealedObjectData.inputSealedObject(cipherObj.getPrivateKey());
-
-
-
     }
 
     //EFFECTS: prints out key image and welcome text to console

@@ -1,6 +1,5 @@
-package model.ciphertest;
+package model;
 
-import model.CipherObj;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -107,8 +106,10 @@ public class CipherTest {
         invalidPrivMod = reader.nextLine();
         invalidPrivExp = reader.nextLine();
 
-        testObj.createPublicKey(pubKey);
-        assertNotNull(testObj.getPublicKey());
+        assertNotNull(testObj.createPublicKey(pubKey));
+        assertNull(testObj.createPublicKey(invalidPub));
+
+
     }
 
     @Test
@@ -125,8 +126,9 @@ public class CipherTest {
         invalidPrivMod = reader.nextLine();
         invalidPrivExp = reader.nextLine();
 
-        testObj.createPrivateKey(privMod,privExp);
-        assertNotNull(testObj.getPrivateKey());
+
+        assertNotNull(testObj.createPrivateKey(privMod,privExp));
+        assertNull(testObj.createPrivateKey(invalidPrivMod,invalidPrivExp));
     }
 }
 
