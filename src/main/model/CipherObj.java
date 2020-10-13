@@ -1,5 +1,7 @@
 package model;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
 import java.math.BigInteger;
@@ -70,7 +72,7 @@ public class CipherObj {
     //MODIFIES: this
     //EFFECTS: creates a private key from modulus and exponent args. assigns the key to the privateKey field and returns
     //true if key succesfully created/replaced
-    public PrivateKey createPrivateKey(String stringPrivateKey, String privateExponent) throws Exception {
+    public PrivateKey createPrivateKey(@NotNull String stringPrivateKey, String privateExponent) throws Exception {
         if (stringPrivateKey.length() == 617 || privateExponent.length() == 617) {
             BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
             BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
