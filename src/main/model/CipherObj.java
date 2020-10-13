@@ -1,9 +1,9 @@
 package model;
 
-import org.jetbrains.annotations.NotNull;
-
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SealedObject;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.spec.RSAPrivateKeySpec;
@@ -68,7 +68,7 @@ public class CipherObj {
     //MODIFIES: this
     //EFFECTS: creates a private key from modulus and exponent args. assigns the key to the privateKey field and returns
     //true if key succesfully created/replaced
-    public PrivateKey createPrivateKey(@NotNull String stringPrivateKey, String privateExponent) throws Exception {
+    public PrivateKey createPrivateKey(String stringPrivateKey, String privateExponent) throws Exception {
         if (stringPrivateKey.length() == 617 || privateExponent.length() == 617) {
             BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
             BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
@@ -96,7 +96,7 @@ public class CipherObj {
     }
 
     public Cipher getCipherDecrypt() throws InvalidKeyException {
-        cipher.init(Cipher.DECRYPT_MODE,privateKey);
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
         return cipher;
     }
 
@@ -104,74 +104,49 @@ public class CipherObj {
     //MODIFIES: this
     //EFFECTS: initiates cipher into ENCRYPT_MODE with currently stored publickey, creates a SealedObject with
     //encryption then assigns it to encapsulatedMsg field and returns the object
-    public SealedObject encryptText(String text) {
-        try {
-            // Creates the cipher obj
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            // Add data to the cipher obj
-            encapsulatedMsg = new SealedObject(text, cipher);
-            return encapsulatedMsg;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    public SealedObject encryptText(String text) throws IOException, IllegalBlockSizeException, InvalidKeyException {
+
+        // Creates the cipher obj
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        // Add data to the cipher obj
+        encapsulatedMsg = new SealedObject(text, cipher);
+        return encapsulatedMsg;
     }
 
     //EFFECTS: initiates cipher into DECRYPT_MODE with currently stored private key, unecrypted the sealed object and
     //stores it in a string variable, returns variable
-    public String decryptText(SealedObject sealedText) {
-        try {
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+    public String decryptText(SealedObject sealedText) throws Exception {
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
-            String msg = (String) sealedText.getObject(cipher);
+        String msg = (String) sealedText.getObject(cipher);
 
-            return msg;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public boolean validPair(PublicKey publicKey, PrivateKey privateKey) {
-        try {
-            // create a challenge
-            byte[] challenge = new byte[10000];
-            ThreadLocalRandom.current().nextBytes(challenge);
-
-            // sign using the private key
-            Signature sig = Signature.getInstance("SHA256withRSA");
-            sig.initSign(privateKey);
-            sig.update(challenge);
-            byte[] signature = sig.sign();
-
-            // verify signature using the public key
-            sig.initVerify(publicKey);
-            sig.update(challenge);
-
-
-            return sig.verify(signature);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+        return msg;
     }
 
 
+    public boolean validPair(PublicKey publicKey, PrivateKey privateKey) throws Exception {
+        // create a challenge
+        byte[] challenge = new byte[10000];
+        ThreadLocalRandom.current().nextBytes(challenge);
+
+        // sign using the private key
+        Signature sig = Signature.getInstance("SHA256withRSA");
+        sig.initSign(privateKey);
+        sig.update(challenge);
+        byte[] signature = sig.sign();
+
+        // verify signature using the public key
+        sig.initVerify(publicKey);
+        sig.update(challenge);
 
 
+        return sig.verify(signature);
 
-
-
-
-
-
-
-
-
-
-
+    }
 
 
 }
+
+
 
 
