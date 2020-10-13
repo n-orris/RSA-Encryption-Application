@@ -96,17 +96,6 @@ public class CipherTest {
 
     @Test
     void createPublicKeyTest() throws Exception {
-        Scanner reader = new Scanner(myObj);
-        // test key data
-        pubKey = reader.nextLine();
-        privMod = reader.nextLine();
-        privExp = reader.nextLine();
-        pubKey2 = reader.nextLine();
-        privMod2 = reader.nextLine();
-        privExp2 = reader.nextLine();
-        invalidPub = reader.nextLine();
-        invalidPrivMod = reader.nextLine();
-        invalidPrivExp = reader.nextLine();
 
         PublicKey publicKey = testObj.createPublicKey(pubKey);
         assertNotNull(publicKey);
