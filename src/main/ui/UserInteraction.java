@@ -7,6 +7,7 @@ import model.SealedObjectData;
 
 import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -72,7 +73,7 @@ public class UserInteraction {
         }
     }
 
-    public void genKeyOption() {
+    public void genKeyOption() throws NoSuchAlgorithmException {
         cipherObj.genKeyPair();
         System.out.println("New Public/Private keypair generated");
         keyOptions();

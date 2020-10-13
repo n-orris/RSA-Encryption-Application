@@ -26,21 +26,17 @@ public class CipherObj {
 
     //MODIFIES: this
     //EFFECTS: Generates an encrypted pair of keys and stores them in keypair,publicKey, and privateKey
-    public void genKeyPair() {
-        try {
-            // generates secure random number
-            SecureRandom secRandom = new SecureRandom();
-            // Sets the encryption algorithm
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGO);
-            // initializes keypairgen with key size and cryptographic strength randomness
-            keyPairGenerator.initialize(2048, secRandom);
-            // Generates the keyPair and assigns to variables
-            keyPair = keyPairGenerator.generateKeyPair();
-            publicKey = keyPair.getPublic();
-            privateKey = keyPair.getPrivate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void genKeyPair() throws NoSuchAlgorithmException {
+        // generates secure random number
+        SecureRandom secRandom = new SecureRandom();
+        // Sets the encryption algorithm
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGO);
+        // initializes keypairgen with key size and cryptographic strength randomness
+        keyPairGenerator.initialize(2048, secRandom);
+        // Generates the keyPair and assigns to variables
+        keyPair = keyPairGenerator.generateKeyPair();
+        publicKey = keyPair.getPublic();
+        privateKey = keyPair.getPrivate();
     }
 
     // Sourced from: https://stackoverflow.com/questions/28204659/how-to-get-public-rsa-key-from-unformatted-string
@@ -49,8 +45,11 @@ public class CipherObj {
     //MODIFIES: this
     //EFFECTS: creates a public key from modulus and exponent args. assigns the key to the publicKey field and returns
     //true if key succesfully created/replaced
+
     public PublicKey createPublicKey(String stringPublicKey) throws Exception {
-        if (stringPublicKey.length() == 617) {
+        if (stringPublicKey == null) {
+            return null;
+        } else if (stringPublicKey.length() == 617) {
             BigInteger keyInt = new BigInteger(stringPublicKey, 10); // hex base
             BigInteger exponentInt = new BigInteger("65537", 10); // decimal base
             RSAPublicKeySpec keySpeck = new RSAPublicKeySpec(keyInt, exponentInt);
@@ -58,8 +57,9 @@ public class CipherObj {
             // Inserts into public key slot
             publicKey = keyFactory.generatePublic(keySpeck);
             return publicKey;
+        } else {
+            return null;
         }
-        return null;
     }
 
     // Sourced from: https://stackoverflow.com/questions/28204659/how-to-get-public-rsa-key-from-unformatted-string
@@ -69,7 +69,11 @@ public class CipherObj {
     //EFFECTS: creates a private key from modulus and exponent args. assigns the key to the privateKey field and returns
     //true if key succesfully created/replaced
     public PrivateKey createPrivateKey(String stringPrivateKey, String privateExponent) throws Exception {
-        if (stringPrivateKey.length() == 617 || privateExponent.length() == 617) {
+
+        if (stringPrivateKey == null) {
+            return null;
+        } else if (stringPrivateKey.length() == 617 || privateExponent.length() == 617) {
+
             BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
             BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
             RSAPrivateKeySpec keySpeck = new RSAPrivateKeySpec(keyInt, exponentInt);
@@ -77,8 +81,9 @@ public class CipherObj {
             // Inserts into public key slot
             privateKey = keyFactory.generatePrivate(keySpeck);
             return privateKey;
+        } else {
+            return null;
         }
-        return null;
     }
 
 
