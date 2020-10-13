@@ -4,8 +4,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
+import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.security.InvalidKeyException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Scanner;
@@ -18,15 +21,22 @@ public class CipherTest {
     CipherObj testObj;
     private final String testString = "test 323lfdsn";
     File myObj = new File("C:\\Users\\taran\\210 Project\\data\\data.txt"); //test data
-    String pubKey;
-    String privMod;
-    String privExp;
-    String pubKey2;
-    String privMod2;
-    String privExp2;
-    String invalidPub;
-    String invalidPrivMod;
-    String invalidPrivExp;
+    Scanner reader = new Scanner(myObj);
+    // test key data
+    String pubKey = reader.nextLine();
+    String privMod = reader.nextLine();
+    String privExp = reader.nextLine();
+    String pubKey2 = reader.nextLine();
+    String privMod2 = reader.nextLine();
+    String privExp2 = reader.nextLine();
+    String invalidPub = reader.nextLine();
+    String invalidPrivMod = reader.nextLine();
+    String invalidPrivExp = reader.nextLine();
+
+    public CipherTest() throws FileNotFoundException {
+
+    }
+
 
 
     @BeforeEach
@@ -68,19 +78,6 @@ public class CipherTest {
     // checks to make sure it will only validate keys that are a pair.
     @Test
     void validPairTest() throws Exception {
-        Scanner reader = new Scanner(myObj);
-        // test key data
-        pubKey = reader.nextLine();
-        privMod = reader.nextLine();
-        privExp = reader.nextLine();
-        pubKey2 = reader.nextLine();
-        privMod2 = reader.nextLine();
-        privExp2 = reader.nextLine();
-        invalidPub = reader.nextLine();
-        invalidPrivMod = reader.nextLine();
-        invalidPrivExp = reader.nextLine();
-        //key pairings imported from ciphertest\data.txt
-        // valid key pair test
         testObj.createPrivateKey(privMod, privExp);
         testObj.createPublicKey(pubKey);
         PublicKey pubKey1 = testObj.getPublicKey();
@@ -94,41 +91,28 @@ public class CipherTest {
 
     @Test
     void createPublicKeyTest() throws Exception {
-        Scanner reader = new Scanner(myObj);
-        // test key data
-        pubKey = reader.nextLine();
-        privMod = reader.nextLine();
-        privExp = reader.nextLine();
-        pubKey2 = reader.nextLine();
-        privMod2 = reader.nextLine();
-        privExp2 = reader.nextLine();
-        invalidPub = reader.nextLine();
-        invalidPrivMod = reader.nextLine();
-        invalidPrivExp = reader.nextLine();
-
         assertNotNull(testObj.createPublicKey(pubKey));
         assertNull(testObj.createPublicKey(invalidPub));
-
-
     }
 
     @Test
     void createPrivateKeyTest() throws Exception {
-        Scanner reader = new Scanner(myObj);
-        // test key data
-        pubKey = reader.nextLine();
-        privMod = reader.nextLine();
-        privExp = reader.nextLine();
-        pubKey2 = reader.nextLine();
-        privMod2 = reader.nextLine();
-        privExp2 = reader.nextLine();
-        invalidPub = reader.nextLine();
-        invalidPrivMod = reader.nextLine();
-        invalidPrivExp = reader.nextLine();
-
-
+        PublicKey publicKey = testObj.createPublicKey(pubKey);
         assertNotNull(testObj.createPrivateKey(privMod,privExp));
         assertNull(testObj.createPrivateKey(invalidPrivMod,invalidPrivExp));
+        assertNotNull(publicKey);
+        assertTrue(publicKey instanceof PublicKey);
+        assertTrue(testObj.createPublicKey(pubKey) instanceof PublicKey);
+        PublicKey pubkey1 = testObj.createPublicKey(pubKey2);
+        testObj.genKeyPair();
+        assertTrue(pubkey1 != testObj.getPublicKey());
+    }
+
+    @Test
+    void getCipherTest() throws InvalidKeyException {
+        testObj.genKeyPair();
+        assertTrue(testObj.getCipherEncrypt() instanceof Cipher);
+        assertTrue(testObj.getCipherDecrypt() instanceof Cipher);
     }
 }
 
