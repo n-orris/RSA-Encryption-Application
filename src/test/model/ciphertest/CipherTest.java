@@ -18,7 +18,7 @@ public class CipherTest {
 
     CipherObj testObj;
     private final String testString = "test 323lfdsn";
-    File myObj = new File("C:\\Users\\taran\\210 Project\\src\\test\\model\\ciphertest\\data.txt"); //test data
+    File myObj = new File("C:\\Users\\taran\\210 Project\\data\\data.txt"); //test data
     String pubKey;
     String privMod;
     String privExp;

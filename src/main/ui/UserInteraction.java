@@ -21,16 +21,18 @@ public class UserInteraction {
 
 
     public void consoleInput() throws Exception {
-        //welcomeArt();
-        //initiateCipherObject();
-        sealedObjectData = new SealedObjectData();
+        welcomeArt();
+        initiateCipherObject();
         cipherObj = new CipherObj();
         cipherObj.genKeyPair();
+        sealedObjectData = new SealedObjectData();
         SealedObject test = cipherObj.encryptText("ggdfdgfd");
         SealedObject test2 = cipherObj.encryptText("test encrypt");
         sealedObjectList.add(test);
         sealedObjectList.add(test2);
-        sealedObjectData.outputSealedObject(sealedObjectList);
+        //sealedObjectData.outputSealedObject(sealedObjectList);
+        //sealedObjectData.inputSealedObject(cipherObj.getPrivateKey());
+
 
 
     }

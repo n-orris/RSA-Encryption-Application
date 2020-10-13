@@ -89,6 +89,16 @@ public class CipherObj {
         return privateKey;
     }
 
+    public Cipher getCipherEncrypt() throws InvalidKeyException {
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        return cipher;
+    }
+
+    public Cipher getCipherDecrypt() throws InvalidKeyException {
+        cipher.init(Cipher.DECRYPT_MODE,privateKey);
+        return cipher;
+    }
+
 
     //MODIFIES: this
     //EFFECTS: initiates cipher into ENCRYPT_MODE with currently stored publickey, creates a SealedObject with
