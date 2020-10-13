@@ -1,14 +1,13 @@
 package model;
 
+
+import model.CipherObj;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.security.InvalidKeyException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Scanner;
@@ -21,67 +20,15 @@ public class CipherTest {
     CipherObj testObj;
     private final String testString = "test 323lfdsn";
     File myObj = new File("C:\\Users\\taran\\210 Project\\data\\data.txt"); //test data
-    Scanner reader = new Scanner(myObj);
-    // test key data
-    private final String pubKey = "16571199536735505367563084467672757506967217380618381006324833766539368254058105" +
-            "4808344509469" +
-            "6890919309623253178750488432231978223448972337652490899067105297043192920193617045505954226449545880156" +
-            "1655332781320154156193020406482168903536051439144375992646594263351070395933630856725535683645667471997" +
-            "5246785665302452690279124380149390615326808171780670238910868811004247822964960487224686136127316551847" +
-            "0435138251366245592535129101025464282272120552759841501994895891520991072314240147274101703753228549915" +
-            "2078921770266154960451450681667485036509218237444308528761368135382135744724320038066871818040701536949" +
-            "157056767";
-    private final String privMod = "16571199536735505367563084467672757506967217380618381006324833766539368254058105" +
-            "48083445094696" +
-            "8909193096232531787504884322319782234489723376524908990671052970431929201936170455059542264495458801561" +
-            "6553327813201541561930204064821689035360514391443759926465942633510703959336308567255356836456674719975" +
-            "2467856653024526902791243801493906153268081717806702389108688110042478229649604872246861361273165518470" +
-            "4351382513662455925351291010254642822721205527598415019948958915209910723142401472741017037532285499152" +
-            "0789217702661549604514506816674850365092182374443085287613681353821357447243200380668718180407015369491" +
-            "57056767";
-    private final String privExp = "14717031567452787805570010350739661228550588528945668066773435228155963651970611" +
-            "58439489727813" +
-            "8736754428385771093579722707726942111726808663918943541709537621359232300372199904882518241034738912157" +
-            "9350136442613829212057091374168509217909324193045037196698410440527595301115560734371893576287048467299" +
-            "9872425150549205259414757280686171881230974655321661885767237283531757565523627479941863046259912493103" +
-            "7859178112021133216431402827497188059636659655528047906259520670762002707724667895227244657638930379195" +
-            "1696566945612876337784826427611568626090508330784399720193885448038487512756486370725810934986224822166" +
-            "59429345";
-    private final String pubKey2 = "2445286186301440589265416260984249039561325035796261420155030489829606712309675" +
-            "954853317266717675735810545886455222830844255610778792084446195154345157724934860096276611037287356431" +
-            "902493282020152589019583293893901758322200492590018485806254292596995350126791180962419021949117000751" +
-            "958068358412445087667535133467562987497883452596198217682324520908190500077317448727398373269437903411" +
-            "339895227197082546080899643261742196842622429350799228534279274249079268517829118181617164973002946615" +
-            "823503041607610404751517094541026797864558316490422178136704586938658922868480106144943828561215448264" +
-            "3369907478498064164668732253";
-    private final String invalidPub = "16571199342222225675sdfgf4334536735505367563084467672757506967217380618381006" +
-            "32483376653936825405810548083445094696890919309623253178750488432231978223448972337652490899067105297043" +
-            "19292019361704550595422644954588015616553327813201541561930204064821689035360514391443759926465942633510" +
-            "70395933630856725535683645667471997524678566530245269027912438014939061532680817178067023891086881100424" +
-            "78229649604872246861361273165518470435138251366245592535129101025464282272120552759841501994895891520991" +
-            "07231424014727410170375322854991520789217702661549604514506816674850365092182374443085287613681353821357" +
-            "44724320038066871818040701536949157056767";
-    private final String invalidPrivMod = "2220504497194322434322396449264796409598120423039518885160509952250588536" +
-            "773112985228189" +
-            "82142340919345456888021390611449225653874885652140425477220783455008454681827359054254332802375397945117" +
-            "80270866582869444743714866013033678372346186028544292729395840896098508406657316983581226658936905724198" +
-            "14153200826321344136784639435291275446548196822648992146945978246222203628958389131504363540585756464989" +
-            "94586796772293546201363433077429676228321247797360027683832014105793296228796569780549890675696960792793" +
-            "857407554135068707041939483611657839036822899027470636601744097282758996839667661867661981414797091241" +
-            "193" +
-            "9210634839304520237";
-    private final String invalidPrivExp = "20085745091015662989039774354378074294040543493476035883521802936200236497" +
-            "89057144265644194400229226136373671377956315041431772285098158004196786684620068519091796112640161242626" +
-            "56991875835670379945201923588997466204739527538278505339335035951867438941461190872757061045890324418612" +
-            "84543671486218650303093153229383574924541028549329364415627461885106510782831132559036515827345123531349" +
-            "82956253171596751498003874239230106880798156435520547933706277099119543547576426978312116384403200123579" +
-            "44884763226412024779115166298993923027422772776910239594032146997990493052017526975294039242311544743213" +
-            "513078395252289";
-
-    public CipherTest() throws FileNotFoundException {
-
-    }
-
+    String pubKey;
+    String privMod;
+    String privExp;
+    String pubKey2;
+    String privMod2;
+    String privExp2;
+    String invalidPub;
+    String invalidPrivMod;
+    String invalidPrivExp;
 
 
     @BeforeEach
@@ -123,60 +70,65 @@ public class CipherTest {
     // checks to make sure it will only validate keys that are a pair.
     @Test
     void validPairTest() throws Exception {
+        Scanner reader = new Scanner(myObj);
+        // test key data
+        pubKey = reader.nextLine();
+        privMod = reader.nextLine();
+        privExp = reader.nextLine();
+        pubKey2 = reader.nextLine();
+        privMod2 = reader.nextLine();
+        privExp2 = reader.nextLine();
+        invalidPub = reader.nextLine();
+        invalidPrivMod = reader.nextLine();
+        invalidPrivExp = reader.nextLine();
+        //key pairings imported from ciphertest\data.txt
+        // valid key pair test
         testObj.createPrivateKey(privMod, privExp);
         testObj.createPublicKey(pubKey);
         PublicKey pubKey1 = testObj.getPublicKey();
         PrivateKey privKey = testObj.getPrivateKey();
         assertTrue(testObj.validPair(pubKey1, privKey));
         // Invalid Key pair
-
-        PublicKey publicKey2 = testObj.createPublicKey(pubKey2);  //different priv key
-        assertFalse(testObj.validPair(publicKey2, privKey));
+        testObj.createPrivateKey(privMod2, privExp2);
+        PrivateKey privKey2 = testObj.getPrivateKey();  //different priv key
+        assertFalse(testObj.validPair(pubKey1, privKey2));
     }
 
     @Test
     void createPublicKeyTest() throws Exception {
-        assertNotNull(testObj.createPublicKey(pubKey));
-        assertNull(testObj.createPublicKey(invalidPub));
+        Scanner reader = new Scanner(myObj);
+        // test key data
+        pubKey = reader.nextLine();
+        privMod = reader.nextLine();
+        privExp = reader.nextLine();
+        pubKey2 = reader.nextLine();
+        privMod2 = reader.nextLine();
+        privExp2 = reader.nextLine();
+        invalidPub = reader.nextLine();
+        invalidPrivMod = reader.nextLine();
+        invalidPrivExp = reader.nextLine();
+
+        testObj.createPublicKey(pubKey);
+        assertNotNull(testObj.getPublicKey());
     }
 
     @Test
     void createPrivateKeyTest() throws Exception {
-        PublicKey publicKey = testObj.createPublicKey(pubKey);
-        assertNotNull(testObj.createPrivateKey(privMod,privExp));
-        assertNull(testObj.createPrivateKey(invalidPrivMod,invalidPrivExp));
-        assertNotNull(publicKey);
-        assertTrue(publicKey instanceof PublicKey);
-        assertTrue(testObj.createPublicKey(pubKey) instanceof PublicKey);
-        PublicKey pubkey1 = testObj.createPublicKey(pubKey2);
-        testObj.genKeyPair();
-        assertTrue(pubkey1 != testObj.getPublicKey());
-    }
+        Scanner reader = new Scanner(myObj);
+        // test key data
+        pubKey = reader.nextLine();
+        privMod = reader.nextLine();
+        privExp = reader.nextLine();
+        pubKey2 = reader.nextLine();
+        privMod2 = reader.nextLine();
+        privExp2 = reader.nextLine();
+        invalidPub = reader.nextLine();
+        invalidPrivMod = reader.nextLine();
+        invalidPrivExp = reader.nextLine();
 
-    @Test
-    void getCipherTest() throws InvalidKeyException {
-        testObj.genKeyPair();
-        assertTrue(testObj.getCipherEncrypt() instanceof Cipher);
-        assertTrue(testObj.getCipherDecrypt() instanceof Cipher);
+        testObj.createPrivateKey(privMod,privExp);
+        assertNotNull(testObj.getPrivateKey());
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
