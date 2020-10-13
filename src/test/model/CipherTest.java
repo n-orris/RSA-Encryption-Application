@@ -19,7 +19,7 @@ public class CipherTest {
 
     CipherObj testObj;
     private final String testString = "test 323lfdsn";
-    File myObj = new File("C:\\Users\\taran\\210 Project\\data\\CipherTestData.txt"); //test data
+    File myObj = new File("C:\\Users\\taran\\210 Project\\data\\data.txt"); //test data
     String pubKey;
     String privMod;
     String privExp;
@@ -81,7 +81,7 @@ public class CipherTest {
         invalidPub = reader.nextLine();
         invalidPrivMod = reader.nextLine();
         invalidPrivExp = reader.nextLine();
-        //key pairings imported from ciphertest\CipherTestData.txt
+        //key pairings imported from ciphertest\data.txt
         // valid key pair test
         testObj.createPrivateKey(privMod, privExp);
         testObj.createPublicKey(pubKey);
@@ -97,9 +97,8 @@ public class CipherTest {
     @Test
     void createPublicKeyTest() throws Exception {
 
-        PublicKey publicKey = testObj.createPublicKey(pubKey);
-        assertNotNull(publicKey);
-
+        testObj.createPublicKey(pubKey);
+        assertNotNull(testObj.getPublicKey());
     }
 
     @Test
@@ -116,10 +115,8 @@ public class CipherTest {
         invalidPrivMod = reader.nextLine();
         invalidPrivExp = reader.nextLine();
 
-        PrivateKey privateKey = testObj.createPrivateKey(privMod,privExp);
-        assertNotNull(privateKey);
-        System.out.println();
-
+        testObj.createPrivateKey(privMod,privExp);
+        assertNotNull(testObj.getPrivateKey());
     }
 }
 
