@@ -1,7 +1,6 @@
 package model;
 
 
-
 import javax.crypto.SealedObject;
 import java.util.List;
 
@@ -10,7 +9,7 @@ public class Account {
     private CipherObj userCipher;
     private List<SealedObject> encryptedMsgs;
 
-    public Account(CipherObj userCipher,List<SealedObject> encryptedMsgs,String id) {
+    public Account(CipherObj userCipher, List<SealedObject> encryptedMsgs, String id) {
         this.userCipher = userCipher;
         this.encryptedMsgs = encryptedMsgs;
         this.id = id;
@@ -23,7 +22,11 @@ public class Account {
     }
 
     public void removeEncryption() {
-
+        try {
+            encryptedMsgs.remove(-1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -39,3 +42,4 @@ public class Account {
         return id;
     }
 }
+

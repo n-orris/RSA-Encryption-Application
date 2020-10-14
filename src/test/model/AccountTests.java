@@ -25,7 +25,7 @@ public class AccountTests {
         cipherObj = new CipherObj();
         cipherObj.genKeyPair();
         encryptedMsgs = new ArrayList<>();
-        account = new Account(cipherObj,encryptedMsgs,"Admin");
+        account = new Account(cipherObj, encryptedMsgs, "Admin");
     }
 
     @Test
@@ -37,18 +37,27 @@ public class AccountTests {
 
     @Test
     void addEncryptionTest() throws InvalidKeyException, IOException, IllegalBlockSizeException {
-        if (encryptedMsgs == null) {
-            encryptedMsgs.add(cipherObj.encryptText("test"));
-            assertEquals(encryptedMsgs.size(), 1);
-        } else {
-            int beforeSize = encryptedMsgs.size();
-            encryptedMsgs.add(cipherObj.encryptText("another test"));
-            assertTrue(beforeSize + 1 == encryptedMsgs.size());
-        }
+        int beforeSize = encryptedMsgs.size();
+        SealedObject sealedObject = cipherObj.encryptText("Test");
+        account.addEncryption(sealedObject);
+        int afterSize = account.getEncryptedMsgs().size();
+        //Test for succesful addition of one object
+        assertEquals(beforeSize + 1, afterSize);
     }
 
     @Test
     void removeEncryptionTest() {
+
+        try {
+            account.removeEncryption();
+        } catch (ArrayIndexOutOfBoundsException ee) {
+            fail("Tried to remove from null array");
+        } //nothing to do here
+
+        //account.addEncryption(cipherObj.encryptText("add1"));
+        //int beforeSize = account.getEncryptedMsgs().size();
+        //account.removeEncryption();
+
 
     }
 }

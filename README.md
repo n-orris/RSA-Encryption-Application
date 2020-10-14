@@ -27,3 +27,9 @@ This project is of interest to me because I am currently work on the business si
 been interested in the subject since a young age. I have previous technical experience through Capture the flag style 
 CyberSec hackathons and choose this project as a way to expand my technical knowledge of the subject. I would like to
 a good understanding of the implementation of encryption in software projects.
+
+User Stories:
+- As a user, I want to be able to Generate an encryption Keypair
+- As a user, I want to be able to add my keypair to an account
+- As a user, I want to be able to encrypt a message with a public key
+- As a user, I want to be able to view and copy my keypair 

@@ -46,7 +46,7 @@ public class UserInteraction {
         System.out.println("-------WELCOME TO ULOCK-------");
         System.out.println();
         System.out.println("Options:");
-        System.out.println("1: Generate new keypair");
+        System.out.println("1: Generate keypair (New Account)");
         System.out.println("2: Enter existing keypair");
         System.out.println("3: Encrypt with public key");
         System.out.println("4: Decrypt with private key");
