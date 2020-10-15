@@ -3,8 +3,6 @@ package ui;
 
 
 import model.CipherObj;
-import model.SealedObjectData;
-
 import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
 import java.security.NoSuchAlgorithmException;
@@ -15,24 +13,14 @@ import java.util.Scanner;
 public class UserInteraction {
     private Scanner consoleScanner = new Scanner(System.in);
     private CipherObj cipherObj;
-    private CipherObj test2;
-    private Cipher cipher;
     private List<SealedObject> sealedObjectList = new ArrayList<>();
-    private SealedObjectData sealedObjectData;
+
 
 
     public void consoleInput() throws Exception {
         welcomeArt();
         initiateCipherObject();
-        //cipherObj = new CipherObj();
-        //cipherObj.genKeyPair();
-        //sealedObjectData = new SealedObjectData();
-        //SealedObject test = cipherObj.encryptText("ggdfdgfd");
-        //SealedObject test2 = cipherObj.encryptText("test encrypt");
-        //sealedObjectList.add(test);
-        //sealedObjectList.add(test2);
-        //sealedObjectData.outputSealedObject(sealedObjectList);
-        //sealedObjectData.inputSealedObject(cipherObj.getPrivateKey());
+
     }
 
     //EFFECTS: prints out key image and welcome text to console
@@ -54,7 +42,7 @@ public class UserInteraction {
         System.out.println("Select an option 1-4:");
     }
 
-    //REQUIRES
+    //REQUIRES:
     public void initiateCipherObject() throws Exception {
         //inititate cipher object for this session
         cipherObj = new CipherObj();

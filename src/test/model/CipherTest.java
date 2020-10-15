@@ -1,22 +1,16 @@
 package model;
 
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 import javax.crypto.Cipher;
-
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
-import java.io.File;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,16 +79,21 @@ public class CipherTest {
     @Test
     void keyGenTest() {
 
+        try {
+            invalidCipher.genKeyPair("s");
+        } catch (Exception e) {
+        }
         // Tests that exception is not thrown as it
         try {
-            invalidCipher.genKeyPair("Invalid algo");
+            testObj.genKeyPair("RSA");
         } catch (Exception e) {
             fail();
         }
 
-        testObj.genKeyPair("RSA");
         boolean valid = testObj.validPair(testObj.getPublicKey(), testObj.getPrivateKey());
+        boolean invalid = testObj.validPair(invalidCipher.getPublicKey(), invalidCipher.getPrivateKey());
         assertTrue(valid);
+        assertFalse(invalid);
     }
 
 
@@ -127,9 +126,12 @@ public class CipherTest {
 
     @Test
     void createPublicKeyTest() {
-        // invalid public modulus Exception
         try {
-            invalidCipher.createPublicKey("invalid string");
+            invalidCipher.createPublicKey(null);
+        } catch (Exception e) {
+        }
+        try {
+            testObj.createPublicKey(pubkey1);
         } catch (Exception e) {
             fail("Invalid public Key");
         }
@@ -153,9 +155,12 @@ public class CipherTest {
     @Test
     void createPrivateKeyTest() throws Exception {
 
-        // invalid public modulus Exception
         try {
-            testObj.createPublicKey("invalid string");
+            invalidCipher.createPrivateKey("invalid Modulus", "invalid exp");
+        } catch (Exception e) {
+        }
+        try {
+            testObj.createPublicKey(pubkey1);
         } catch (Exception e) {
             fail("Invalid Private key modulus or exponent");
         }
@@ -174,21 +179,38 @@ public class CipherTest {
     @Test
     void getCipherEncryptTest() throws Exception {
         testObj.genKeyPair("RSA");
+
+        try {
+            invalidCipher.getCipherEncrypt();
+        } catch (Exception e) {
+
+        }
+
+        try {
+            testObj.getCipherEncrypt();
+        } catch (Exception e) {
+            fail("valid cipher should be active");
+        }
+
+
         Cipher cipher = testObj.getCipherEncrypt();
         SealedObject sealedObject = new SealedObject("tt", cipher);
         assertTrue(sealedObject instanceof SealedObject);
     }
 
+
     @Test
     void getCipherDecryptTest() throws Exception {
-        // InvalidKey test
+        testObj.createPrivateKey("Invalid Key to set key to null", "test.test");
         try {
-            testObj.createPrivateKey("Invalid Key to set key to null", "test.test");
+            invalidCipher.getCipherDecrypt();
+        } catch (Exception e) {
+        }
+        try {
             testObj.getCipherDecrypt();
         } catch (Exception e) {
-            fail("InvalidKeyException, provide valid private key first");
+            fail("Should have valid private key");
         }
-
 
         testObj.genKeyPair("RSA");
         SealedObject test = testObj.encryptText("test");

@@ -80,16 +80,14 @@ public class CipherObj {
     public PrivateKey createPrivateKey(String stringPrivateKey, String privateExponent) {
 
         try {
-            if (stringPrivateKey.length() == 617 || privateExponent.length() == 617) {
+            BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
+            BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
+            RSAPrivateKeySpec keySpeck = new RSAPrivateKeySpec(keyInt, exponentInt);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            // Inserts into public key slot
+            privateKey = keyFactory.generatePrivate(keySpeck);
+            return privateKey;
 
-                BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
-                BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
-                RSAPrivateKeySpec keySpeck = new RSAPrivateKeySpec(keyInt, exponentInt);
-                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-                // Inserts into public key slot
-                privateKey = keyFactory.generatePrivate(keySpeck);
-                return privateKey;
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }

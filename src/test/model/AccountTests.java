@@ -22,11 +22,13 @@ public class AccountTests {
 
     @BeforeEach
     void setup() throws Exception {
+        //All relevant exceptions already tested for cipherobj so not need to test exceptions here
         cipherObj = new CipherObj();
         cipherObj.genKeyPair("RSA");
         encryptedMsgs = new ArrayList<>();
         account = new Account(cipherObj, encryptedMsgs, "Admin");
     }
+
 
     @Test
     void constructorTest() {
@@ -36,7 +38,7 @@ public class AccountTests {
     }
 
     @Test
-    void addEncryptionTest() throws InvalidKeyException, IOException, IllegalBlockSizeException {
+    void addEncryptionTest() {
         int beforeSize = encryptedMsgs.size();
         SealedObject sealedObject = cipherObj.encryptText("Test");
         account.addEncryption(sealedObject);
