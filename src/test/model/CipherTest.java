@@ -120,8 +120,15 @@ public class CipherTest {
     }
 
     @Test
-    void createPublicKeyTest() throws Exception {
+    void createPublicKeyTest() {
         CipherObj cObj = new CipherObj();
+
+        try {
+            cObj.createPublicKey("invalid string");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         assertNull(testObj.createPublicKey(null));
         PublicKey publicKey = testObj.createPublicKey(bbb);
@@ -155,6 +162,15 @@ public class CipherTest {
 
     @Test
     void getCipherDecryptTest() throws Exception {
+        // InvalidKey test
+        try {
+            testObj.createPrivateKey("Invalid Key to set key to null", "test.test");
+            testObj.getCipherDecrypt();
+        } catch (Exception e) {
+            fail("InvalidKeyException, provide valid private key first");
+        }
+
+
         testObj.genKeyPair();
         SealedObject test = testObj.encryptText("test");
         Cipher cipher = testObj.getCipherDecrypt();

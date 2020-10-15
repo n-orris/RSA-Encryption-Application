@@ -16,14 +16,16 @@ public class Account {
     }
 
     //MODIFIES: this
-    //EFFECTS: add a SealedObject to encryptedMsgs  Arraylist
+    //EFFECTS: Add a SealedObject to encryptedMsgs Arraylist
     public void addEncryption(SealedObject encryptObj) {
         encryptedMsgs.add(encryptObj);
     }
 
-    public void removeEncryption() {
+    //MODIFIES: this
+    //EFFECTS: Removes the arraylist object at index, catchs IndexOutOfBoundsException
+    public void removeEncryption(int index) {
         try {
-            encryptedMsgs.remove(-1);
+            encryptedMsgs.remove(index);
         } catch (Exception e) {
             e.printStackTrace();
         }
