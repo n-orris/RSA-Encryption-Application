@@ -51,12 +51,20 @@ public class AccountTests {
     void removeEncryptionTest() {
         SealedObject testObject = cipherObj.encryptText("Test object for removeEncrypt");
         account.addEncryption(testObject);
-        int BeforeSize = account.getEncryptedMsgs().size();
-        account.removeEncryption(1);
+        int beforeSize = account.getEncryptedMsgs().size();
+        account.removeEncryption(0);
+        int afterSize = account.getEncryptedMsgs().size();
+        assertEquals(beforeSize - 1, afterSize);
 
         try {
-            account.removeEncryption(1000);
-        } catch (ArrayIndexOutOfBoundsException ee) {
+            account.removeEncryption(10000);
+        } catch (Exception e) {
+        }
+        try {
+            SealedObject testObject1 = cipherObj.encryptText("Test object for removeEncrypt");
+            account.addEncryption(testObject1);
+            account.removeEncryption(0);
+        } catch (Exception ee) {
             fail("Tried to remove from null array");
         } //nothing to do here
 
