@@ -74,7 +74,7 @@ public class UserInteraction {
     }
 
     public void genKeyOption() throws NoSuchAlgorithmException {
-        cipherObj.genKeyPair();
+        cipherObj.genKeyPair("RSA");
         System.out.println("New Public/Private keypair generated");
         keyOptions();
     }

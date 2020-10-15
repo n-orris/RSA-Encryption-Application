@@ -1,6 +1,7 @@
 package model;
 
 import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 import java.math.BigInteger;
 import java.security.*;
@@ -10,31 +11,26 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CipherObj {
 
-    private static final String ALGO = "RSA"; // encryption algorithm
     KeyPair keyPair;
     private PublicKey publicKey;
     private PrivateKey privateKey;
-    private Cipher cipher; // Cipher object used to encrypt/decrypt
+    private Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");// Cipher object used to encrypt/decrypt
     private SealedObject encapsulatedMsg; // holds encrypted message
 
-    public CipherObj() {
-        try {
-            // adds the encryption algorithm
-            cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public CipherObj() throws NoSuchAlgorithmException, NoSuchPaddingException {
+        // Algorithm and padding is hardcoded for phase 1, exceptions wont be an issue
     }
 
 
     //MODIFIES: this
     //EFFECTS: Generates an encrypted pair of keys and stores them in keypair,publicKey, and privateKey
-    public void genKeyPair() {
+    public void genKeyPair(String algorithm) {
+        //throws exception but algorithm is hardcoded so exception will not be an issue
         try {
             // generates secure random number
             SecureRandom secRandom = new SecureRandom();
             // Sets the encryption algorithm
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGO);
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(algorithm);
             // initializes keypairgen with key size and cryptographic strength randomness
             keyPairGenerator.initialize(2048, secRandom);
             // Generates the keyPair and assigns to variables
@@ -84,8 +80,6 @@ public class CipherObj {
     public PrivateKey createPrivateKey(String stringPrivateKey, String privateExponent) {
 
         try {
-
-
             if (stringPrivateKey.length() == 617 || privateExponent.length() == 617) {
 
                 BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base

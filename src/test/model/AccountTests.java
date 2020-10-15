@@ -23,7 +23,7 @@ public class AccountTests {
     @BeforeEach
     void setup() throws Exception {
         cipherObj = new CipherObj();
-        cipherObj.genKeyPair();
+        cipherObj.genKeyPair("RSA");
         encryptedMsgs = new ArrayList<>();
         account = new Account(cipherObj, encryptedMsgs, "Admin");
     }

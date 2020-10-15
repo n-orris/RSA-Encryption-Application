@@ -16,7 +16,7 @@ public class SealedObjectData {
 
     public SealedObjectData() throws Exception {
         cipherObj = new CipherObj();
-        cipherObj.genKeyPair();
+        cipherObj.genKeyPair("RSA");
     }
 
     public void inputSealedObject(PrivateKey privateKey) throws Exception {

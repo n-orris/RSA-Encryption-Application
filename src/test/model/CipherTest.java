@@ -1,17 +1,17 @@
 package model;
 
 
-import model.CipherObj;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
+
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 import java.io.File;
-import java.io.IOException;
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -25,15 +25,9 @@ public class CipherTest {
 
     CipherObj testObj;
     private final String testString = "test 323lfdsn";
-    File myObj = new File("C:\\Users\\taran\\210 Project\\data\\data.txt"); //test data
-    String pubKey;
-    String pubKey2;
-    String privMod2;
-    String privExp2;
-    String invalidPub;
-    String invalidPrivMod;
-    String invalidPrivExp;
-    String bbb = "249292008192106653555642295197979900235908923957335763593030527966577820204510150521431125072197" +
+
+    CipherObj invalidCipher;
+    String pubkey1 = "249292008192106653555642295197979900235908923957335763593030527966577820204510150521431125072197" +
             "728392407607589157635707866607824863444659217351002904265085768041043979122470762307186702660972949" +
             "8239147433588448008766293209987542157686706073316270046166191645801704549728728028979309356387111112" +
             "095920820586121227113623269390554456201148281123836957567261602677023670580398980663240223578181997" +
@@ -57,15 +51,19 @@ public class CipherTest {
 
 
     @BeforeEach
-    void setup() throws Exception {
+    void setup() throws NoSuchPaddingException, NoSuchAlgorithmException {
+        // Requires exceptions but wont throw them as Algorithm/padding is currently hardcoded
         testObj = new CipherObj();
+        //Cipher object for invalid tests
+        invalidCipher = new CipherObj();
     }
+
 
     // Having a known output for an encryption would defeat the point
     // this test therefor makes sure the output encrypt is the expected byte size
     @Test
-    void encryptionTest() throws Exception {
-        testObj.genKeyPair();
+    void encryptionTest() {
+        testObj.genKeyPair("RSA");
         assertEquals(testObj.encryptText(testString).getClass().getSimpleName(), "SealedObject");
     }
 
@@ -73,7 +71,7 @@ public class CipherTest {
     @Test
     void decryptTest() throws Exception {
         // test a string can be encrypted than decrypted
-        testObj.genKeyPair();
+        testObj.genKeyPair("RSA");
         SealedObject sealedTest = testObj.encryptText(testString);
         String output = testObj.decryptText(sealedTest);
         assertEquals(output, testString);
@@ -85,8 +83,16 @@ public class CipherTest {
 
     // checks if valid keyPair has been generated
     @Test
-    void keyGenTest() throws Exception {
-        testObj.genKeyPair();
+    void keyGenTest() {
+
+        // Tests that exception is not thrown as it
+        try {
+            invalidCipher.genKeyPair("Invalid algo");
+        } catch (Exception e) {
+            fail();
+        }
+
+        testObj.genKeyPair("RSA");
         boolean valid = testObj.validPair(testObj.getPublicKey(), testObj.getPrivateKey());
         assertTrue(valid);
     }
@@ -94,67 +100,80 @@ public class CipherTest {
 
     // checks to make sure it will only validate keys that are a pair.
     @Test
-    void validPairTest() throws Exception {
-        Scanner reader = new Scanner(myObj);
-        // test key data
-        pubKey = reader.nextLine();
-        privMod = reader.nextLine();
-        privExp = reader.nextLine();
-        pubKey2 = reader.nextLine();
-        privMod2 = reader.nextLine();
-        privExp2 = reader.nextLine();
-        invalidPub = reader.nextLine();
-        invalidPrivMod = reader.nextLine();
-        invalidPrivExp = reader.nextLine();
-        //key pairings imported from ciphertest\data.txt
+    void validPairTest() {
+
+        testObj.genKeyPair("RSA");
+        try {
+            testObj.validPair(invalidCipher.getPublicKey(), testObj.getPrivateKey());
+        } catch (Exception e) {
+            fail("Invalid public Key");
+        }
+        try {
+            testObj.validPair(testObj.getPublicKey(), invalidCipher.getPrivateKey());
+        } catch (Exception e) {
+            fail("Invalid private key");
+        }
         // valid key pair test
-        testObj.createPrivateKey(privMod, privExp);
-        testObj.createPublicKey(pubKey);
-        PublicKey pubKey1 = testObj.getPublicKey();
+        PublicKey pubKey = testObj.getPublicKey();
         PrivateKey privKey = testObj.getPrivateKey();
-        assertTrue(testObj.validPair(pubKey1, privKey));
+        assertTrue(testObj.validPair(pubKey, privKey));
         // Invalid Key pair
-        testObj.createPrivateKey(privMod2, privExp2);
-        PrivateKey privKey2 = testObj.getPrivateKey();  //different priv key
-        assertFalse(testObj.validPair(pubKey1, privKey2));
+        invalidCipher.createPublicKey(pubkey1);
+        invalidCipher.createPrivateKey(privMod, privExp);
+        PublicKey pubKey2 = invalidCipher.getPublicKey();
+        PrivateKey privKey2 = invalidCipher.getPrivateKey();  //different priv key
+        assertFalse(testObj.validPair(pubKey2, privKey2));
     }
 
     @Test
     void createPublicKeyTest() {
-        CipherObj cObj = new CipherObj();
-
+        // invalid public modulus Exception
         try {
-            cObj.createPublicKey("invalid string");
+            invalidCipher.createPublicKey("invalid string");
         } catch (Exception e) {
-            e.printStackTrace();
+            fail("Invalid public Key");
         }
 
-
+        // Null test
         assertNull(testObj.createPublicKey(null));
-        PublicKey publicKey = testObj.createPublicKey(bbb);
+        // Valid key test
+        assertNotNull(testObj.createPublicKey(pubkey1));
+        // Invalid/incorrect format string input
         assertNull(testObj.createPublicKey("Fdsffdsaf"));
-        assertNotNull(testObj.createPublicKey(bbb));
-        cObj.createPublicKey("dsafwdsds");
+
+        // invalid key creation
+        invalidCipher.createPublicKey("dsafwdsds");
+
+        // tests that key that should be valid can encrypt
         assertNotNull(testObj.encryptText("tttest"));
-        assertNull(cObj.encryptText("test"));
+        //tests that invalid key cant encrypt
+        assertNull(invalidCipher.encryptText("test"));
     }
 
     @Test
     void createPrivateKeyTest() throws Exception {
+
+        // invalid public modulus Exception
+        try {
+            testObj.createPublicKey("invalid string");
+        } catch (Exception e) {
+            fail("Invalid Private key modulus or exponent");
+        }
+
         CipherObj testObj2 = new CipherObj();
         // test key data
         assertNull(testObj.createPrivateKey(null, "33243"));
         PrivateKey privateKey = testObj.createPrivateKey(privMod, privExp);
         assertNull(testObj.createPrivateKey("Fdsffdsaf", "43253"));
         assertNotNull(testObj.createPrivateKey(privMod, privExp));
-        testObj.createPublicKey(bbb);
+        testObj.createPublicKey(pubkey1);
         SealedObject test = testObj.encryptText("Test");
         assertNull(testObj2.decryptText(test));
     }
 
     @Test
     void getCipherEncryptTest() throws Exception {
-        testObj.genKeyPair();
+        testObj.genKeyPair("RSA");
         Cipher cipher = testObj.getCipherEncrypt();
         SealedObject sealedObject = new SealedObject("tt", cipher);
         assertTrue(sealedObject instanceof SealedObject);
@@ -171,7 +190,7 @@ public class CipherTest {
         }
 
 
-        testObj.genKeyPair();
+        testObj.genKeyPair("RSA");
         SealedObject test = testObj.encryptText("test");
         Cipher cipher = testObj.getCipherDecrypt();
         assertEquals(test.getObject(cipher), "test");
