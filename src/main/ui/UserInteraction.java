@@ -2,10 +2,9 @@ package ui;
 
 
 
+import model.Account;
 import model.CipherObj;
-import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,6 +13,7 @@ public class UserInteraction {
     private Scanner consoleScanner = new Scanner(System.in);
     private CipherObj cipherObj;
     private List<SealedObject> sealedObjectList = new ArrayList<>();
+    private Account account;
 
 
 
@@ -37,9 +37,8 @@ public class UserInteraction {
         System.out.println("1: Generate keypair (New Account)");
         System.out.println("2: Enter existing keypair");
         System.out.println("3: Encrypt with public key");
-        System.out.println("4: Decrypt with private key");
         System.out.println();
-        System.out.println("Select an option 1-4:");
+        System.out.println("Select an option 1-3:");
     }
 
     //REQUIRES:
@@ -56,15 +55,19 @@ public class UserInteraction {
             existingKeypair();
         } else if (num == 3) {
             encryptWithPublic();
-        } else if (num == 4) {
-            decryptWithPrivate();
         }
     }
 
-    public void genKeyOption() throws NoSuchAlgorithmException {
-        cipherObj.genKeyPair("RSA");
-        System.out.println("New Public/Private keypair generated");
-        keyOptions();
+    public void genKeyOption() {
+        if (account != null) {
+            System.out.println("Already contains valid keypair");
+            keyOptions();
+        } else {
+
+            cipherObj.genKeyPair("RSA");
+            System.out.println("New Public/Private keypair generated");
+            keyOptions();
+        }
     }
 
     public void existingKeypair() throws Exception {
@@ -89,7 +92,7 @@ public class UserInteraction {
     //MODIFIES: creates and inserts public key into cipherObj
     //EFFECTS:
 
-    public void encryptWithPublic() throws Exception {
+    public void encryptWithPublic() {
         System.out.println("Please enter public modulus for encryption");
         String pubKey = consoleScanner.nextLine();
         System.out.println("Plese Enter message to encrypt:");
@@ -99,15 +102,17 @@ public class UserInteraction {
         keyOptions();
     }
 
-    public void decryptWithPrivate() {
-        System.out.println("Enter private key modulus:");
-        String privMod = consoleScanner.nextLine();
-        System.out.println("Enter private key exponent:");
-        String privExp = consoleScanner.nextLine();
-        System.out.println("Enter encrypted message");
-        byte[] cipherText = consoleScanner.nextLine().getBytes();
-        keyOptions();
-    }
+    // Code is part of P2!!
+    //public void decryptWithPrivate() {
+    // System.out.println("Enter private key modulus:");
+    // String privMod = consoleScanner.nextLine();
+    // System.out.println("Enter private key exponent:");
+    // String privExp = consoleScanner.nextLine();
+    // System.out.println("Enter encrypted message");
+    // byte[] cipherText = consoleScanner.nextLine().getBytes();
+    // keyOptions();
+    //}
+
 
     public void keyOptions() {
         try {
@@ -122,9 +127,11 @@ public class UserInteraction {
             } else if (choice == 3) {
                 viewKeys();
             } else if (choice == 4) {
-                System.out.println();
+                createAccount();
+            } else if (choice == 5) {
+                genKeyOption();
             } else {
-                System.out.println("Invalid Number, program ending");
+                System.out.println("Invalid program");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,17 +142,18 @@ public class UserInteraction {
         System.out.println();
         System.out.println("Options: ");
         System.out.println("1: Encrypt Message");
-        System.out.println("2: Decrypt Message");
+        System.out.println("2: Decrypt stored Messages");
         System.out.println("3: View your Keys");
         System.out.println("4: Create Account");
+        System.out.println("5: Generate Keypair");
         System.out.println();
-        System.out.println("Please select a number:");
+        System.out.println("Please select a number :");
     }
 
     //MODIFIES: Assigns encrypted value to cipherObj instance
     //EFFECTS:  Takes user message, encrypts it with copherObj instance and displays
     //          encrypted message in console
-    public void encrypt() throws Exception {
+    public void encrypt() {
         if (cipherObj.getPublicKey() == null) {
             System.out.println("It appears you dont have a public key stored.");
             System.out.println("Please enter public key modulus:");
@@ -164,7 +172,7 @@ public class UserInteraction {
         keyOptions();
     }
 
-    public void decrypt() throws Exception {
+    public void decrypt() {
         if (cipherObj.getPrivateKey() == null) {
             System.out.println("It appears you dont have a private key stored.");
             System.out.println("Please enter private key modulus:");
@@ -173,12 +181,8 @@ public class UserInteraction {
             String exponent = consoleScanner.nextLine();
             // creates a public key
             cipherObj.createPrivateKey(modulus, exponent);
-
-            System.out.println("Please enter encrypted text");
-            byte[] ciphermsg = consoleScanner.nextLine().getBytes();
-            //System.out.println(cipherObj.decryptText(ciphermsg));
         }
-
+        System.out.println();
         for (SealedObject sobj : sealedObjectList) {
             System.out.println(cipherObj.decryptText(sobj));
         }
@@ -187,10 +191,27 @@ public class UserInteraction {
 
     }
 
-    public void viewKeys() throws Exception {
+    public void viewKeys() {
         System.out.println(cipherObj.getPublicKey());
         System.out.println(cipherObj.getPrivateKey());
         keyOptions();
+    }
+
+
+    //EFFECTS: creates an account for the user with the current cipherObj,encrypted msgs list and a username.
+    // If invalid keypair it prints error msg.Both options return to key menu
+    public void createAccount() {
+        if (cipherObj.validPair(cipherObj.getPublicKey(), cipherObj.getPrivateKey())) {
+            System.out.println("Please enter username");
+            String user = consoleScanner.nextLine();
+            account = new Account(cipherObj, sealedObjectList, user);
+            System.out.println("Account created succesfully");
+            System.out.println();
+            keyOptions();
+        } else {
+            System.out.println("Invalid key pair,please generate key pair");
+            keyOptions();
+        }
     }
 
 

@@ -6,10 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-import javax.crypto.IllegalBlockSizeException;
+
 import javax.crypto.SealedObject;
-import java.io.IOException;
-import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +15,6 @@ public class AccountTests {
     private CipherObj cipherObj;
     private Account account;
     private List<SealedObject> encryptedMsgs;
-    private String id;
 
 
     @BeforeEach
@@ -47,6 +44,7 @@ public class AccountTests {
         assertEquals(beforeSize + 1, afterSize);
     }
 
+    //
     @Test
     void removeEncryptionTest() {
         SealedObject testObject = cipherObj.encryptText("Test object for removeEncrypt");
@@ -67,7 +65,5 @@ public class AccountTests {
         } catch (Exception ee) {
             fail("Tried to remove from null array");
         } //nothing to do here
-
-
     }
 }

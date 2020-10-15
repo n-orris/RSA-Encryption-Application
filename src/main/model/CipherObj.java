@@ -49,7 +49,6 @@ public class CipherObj {
     //MODIFIES: this
     //EFFECTS: creates a public key from modulus and exponent args. assigns the key to the publicKey field and returns
     //true if key succesfully created/replaced
-
     public PublicKey createPublicKey(String stringPublicKey) {
         try {
             if (stringPublicKey.length() == 617) {
@@ -75,8 +74,6 @@ public class CipherObj {
     //MODIFIES: this
     //EFFECTS: creates a private key from modulus and exponent args. assigns the key to the privateKey field and returns
     //true if key succesfully created/replaced
-
-
     public PrivateKey createPrivateKey(String stringPrivateKey, String privateExponent) {
 
         try {
@@ -96,14 +93,17 @@ public class CipherObj {
     }
 
 
+    // EFFECTS: returns the public key
     public PublicKey getPublicKey() {
         return publicKey;
     }
+    //EFFECTS: returns the private key
 
     public PrivateKey getPrivateKey() {
         return privateKey;
     }
 
+    //returns the cipher in encrypt mode, if invalid public key returns null
     public Cipher getCipherEncrypt() {
         try {
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
@@ -114,6 +114,7 @@ public class CipherObj {
         return null;
     }
 
+    //EFFECTS: retrieves the cipher in decrypt mode, if invalid private key returns null
     public Cipher getCipherDecrypt() {
         try {
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
@@ -145,9 +146,9 @@ public class CipherObj {
         return null;
     }
 
-    //EFFECTS: initiates cipher into DECRYPT_MODE with currently stored private key, unecrypted the sealed object and
-    //stores it in a string variable, returns variable
-    public String decryptText(SealedObject sealedText) throws Exception {
+    //EFFECTS: initiates cipher into DECRYPT_MODE with currently stored private key, unecrypts the sealed object and
+    //return the plaintext string
+    public String decryptText(SealedObject sealedText) {
 
         try {
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
@@ -161,7 +162,10 @@ public class CipherObj {
         return null;
     }
 
+    // solution sourced from https://stackoverflow.com/questions/49426844/how-to-validate-a-public-and-private-key-pair-in-java
+    // @user Peter Walser
 
+    // EFFECTS: returns true if keypair is valid, false otherwise
     public boolean validPair(PublicKey publicKey, PrivateKey privateKey) {
         try {
             // create a challenge

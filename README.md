@@ -32,4 +32,4 @@ User Stories:
 - As a user, I want to be able to Generate an encryption Keypair
 - As a user, I want to be able to add my keypair to an account
 - As a user, I want to be able to encrypt a message with a public key
-- As a user, I want to be able to view and copy my keypair 
+- As a user, I want to be able to view my keypair
