@@ -30,6 +30,6 @@ a good understanding of the implementation of encryption in software projects.
 
 User Stories:
 - As a user, I want to be able to Generate an encryption Keypair
-- As a user, I want to be able to add my keypair to an account
 - As a user, I want to be able to encrypt a message with a public key
+- As a user, I want to be able to add my keypair and multiple encrypted messages to an account
 - As a user, I want to be able to view my keypair
