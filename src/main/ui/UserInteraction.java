@@ -9,6 +9,7 @@ import persistence.JsonWriter;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class UserInteraction {
     //EFFECTS: Starts the sequence of user interactions
     public UserInteraction() throws Exception {
         jsonWriter = new JsonWriter(JSON_STORE);
-        //jsonReader = new JsonReader(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
         welcomeArt();
         initiateCipherObject();
 
@@ -80,7 +81,21 @@ public class UserInteraction {
 
     }
 
+    //MODIFIES: account
+    //EFFECTS:  logs into stored account
     public void login() {
+        try {
+            jsonReader.read();
+            account = jsonReader.read();
+            account.useCipher(1);
+            System.out.println("Loaded " + account.getId() + " from " + JSON_STORE);
+
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_STORE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        keyOptions();
 
     }
 
@@ -175,13 +190,7 @@ public class UserInteraction {
     //EFFECTS:  Takes user message, encrypts it with copherObj instance and displays
     //          encrypted message in console
     public void encrypt() {
-        if (cipherObj.getPublicKey() == null) {
-            System.out.println("It appears you dont have a public key stored.");
-            System.out.println("Please enter public key modulus:");
-            String modulus = consoleScanner.nextLine();
-            // creates a public key
-            cipherObj.createPublicKey(modulus);
-        }
+
         System.out.println("Please enter Message you would like to encrypt:");
         String msg = consoleScanner.nextLine();
         if (account == null) {
@@ -247,7 +256,7 @@ public class UserInteraction {
         } else {
             CipherObj nm = new CipherObj();
             nm.genKeyPair("RSA");
-            account.newCipher(nm, sealedObjectList);
+            account.newCipher(nm);
             int size = account.getCipherSize();
             account.useCipher(size);
             System.out.println(account.getAccountCipher());
@@ -262,6 +271,8 @@ public class UserInteraction {
 
     }
 
+    //MODIFEIS: data file
+    //EFFECTS: outputs current account data to file
     public void saveAccount() {
         try {
             jsonWriter.open();
@@ -273,6 +284,8 @@ public class UserInteraction {
         }
 
     }
+
+    // Sets which CipherObj to use
 
     public void setCipher() {
         System.out.println("Please enter id of cipher you would like to use");

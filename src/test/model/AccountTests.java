@@ -15,7 +15,7 @@ import java.util.List;
 public class AccountTests {
     private CipherObj cipherObj;
     private Account account;
-    private List<SealedObject> encryptedMsgs;
+
 
 
     @BeforeEach
@@ -23,7 +23,6 @@ public class AccountTests {
         //All relevant exceptions already tested for cipherobj so not need to test exceptions here
         cipherObj = new CipherObj();
         cipherObj.genKeyPair("RSA");
-        encryptedMsgs = new ArrayList<>();
         account = new Account(cipherObj, "Admin");
     }
 
@@ -31,28 +30,19 @@ public class AccountTests {
     @Test
     void constructorTest() {
         assertNotNull(account.getAccountCipher());
-        assertNotNull(account.getEncryptedMsgs());
+        assertNotNull(account.getAccountCipher().getEncryptedMsgs());
         assertNotNull(account.getId());
     }
 
-    @Test
-    void addEncryptionTest() {
-        int beforeSize = encryptedMsgs.size();
-        SealedObject sealedObject = cipherObj.encryptText("Test");
-        account.addEncryption(sealedObject);
-        int afterSize = account.getEncryptedMsgs().size();
-        //Test for succesful addition of one object
-        assertEquals(beforeSize + 1, afterSize);
-    }
+
 
     //
     @Test
     void removeEncryptionTest() {
         SealedObject testObject = cipherObj.encryptText("Test object for removeEncrypt");
-        account.addEncryption(testObject);
-        int beforeSize = account.getEncryptedMsgs().size();
+        int beforeSize = account.getAccountCipher().getEncryptedMsgs().size();
         account.removeEncryption(0);
-        int afterSize = account.getEncryptedMsgs().size();
+        int afterSize = account.getAccountCipher().getEncryptedMsgs().size();
         assertEquals(beforeSize - 1, afterSize);
 
         try {
@@ -61,7 +51,6 @@ public class AccountTests {
         }
         try {
             SealedObject testObject1 = cipherObj.encryptText("Test object for removeEncrypt");
-            account.addEncryption(testObject1);
             account.removeEncryption(0);
         } catch (Exception ee) {
             fail("Tried to remove from null array");
@@ -71,5 +60,30 @@ public class AccountTests {
     @Test
     void newCipherTest() throws Exception {
         CipherObj testC = new CipherObj();
+        account.newCipher(testC);
+        assertEquals(2, account.getCipherSize());
     }
+
+    @Test
+    void removeEncryption() {
+        account.getAccountCipher().encryptText("test");
+        int before = account.getAccountCipher().getEncryptedMsgs().size();
+        account.getAccountCipher().removeEncryption(0);
+        assertEquals(before - 1, account.getAccountCipher().getEncryptedMsgs().size());
+
+        try {
+            CipherObj cipher2 = new CipherObj();
+            account.newCipher(cipher2);
+            account.useCipher(2);
+            int before1 = account.getAccountCipher().getEncryptedMsgs().size();
+            account.getAccountCipher().removeEncryption(0);
+            assertEquals(before - 1, account.getAccountCipher().getEncryptedMsgs().size());
+            fail("invalid index");
+        } catch (Exception e) {
+            // should pass
+        }
+
+    }
+
+
 }

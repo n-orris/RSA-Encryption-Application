@@ -35,6 +35,6 @@ User Stories:
 - As a user, I want to be able to view my keypair
 
 P2 Stories:
--As a user, I want to be able to save an account containing my info and cipherobjs
--As a user, I want to be able to enter my userid and use the associated accounted 
+-As a user, I want to be able to save an account containing my info and keys
+-As a user, I want to be able to enter my userid and use the associated account 
 

@@ -220,8 +220,34 @@ public class CipherTest {
         SealedObject test = testObj.encryptText("test");
         Cipher cipher = testObj.getCipherDecrypt();
         assertEquals(test.getObject(cipher), "test");
+    }
 
+    @Test
+    void getterSetterTests() {
+        testObj.genKeyPair("RSA");
+        SealedObject obj = testObj.encryptText("test");
+        int before = testObj.getEncryptedMsgs().size();
+        testObj.removeEncryption(0);
+        assertEquals(testObj.getEncryptedMsgs().size(), 0);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

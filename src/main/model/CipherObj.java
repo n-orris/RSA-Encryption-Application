@@ -120,14 +120,17 @@ public class CipherObj implements Writable {
         return privateKey;
     }
 
+    // Adds a sealed object to the lsit
     public void addEncryption(SealedObject s) {
         msgs.add(s);
     }
 
+    // removes sealed object at index in list
     public void removeEncryption(int index) {
         msgs.remove(index);
     }
 
+    // gets all sealedobjects in list
     public List<SealedObject> getEncryptedMsgs() {
         return msgs;
     }
@@ -227,7 +230,6 @@ public class CipherObj implements Writable {
         json.put("public", publicKey);
         json.put("private", privateKey);
         json.put("cipher", cipher);
-        json.put("messages", msgs);
         return json;
     }
 

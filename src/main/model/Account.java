@@ -20,6 +20,7 @@ public class Account implements Writable {
     private JsonReader jsonReader;
     private JsonWriter jsonWriter;
 
+    //EFFECTS: Constructs a new account with 1 cipherobj
     public Account(CipherObj userCipher, String id) {
         this.userCiphers.add(userCipher);
         userCiphers.get(0).setId(0);
@@ -28,18 +29,12 @@ public class Account implements Writable {
 
     //MODIFIES: this
     //EFFECTS: adds a new cipher to userciphers
-    public void newCipher(CipherObj cipher, List<SealedObject> msgs) {
+    public void newCipher(CipherObj cipher) {
         userCiphers.add(cipher);
         int size = userCiphers.size();
         userCiphers.get(size - 1).setId(size - 1);
     }
 
-
-    //MODIFIES: this
-    //EFFECTS: Add a SealedObject to encryptedMsgs Arraylist
-    public void addEncryption(SealedObject encryptObj) {
-        userCiphers.get(cipherId).addEncryption(encryptObj);
-    }
 
     //MODIFIES: this
     //EFFECTS: Removes the arraylist object at index, catchs IndexOutOfBoundsException
@@ -51,6 +46,8 @@ public class Account implements Writable {
         }
     }
 
+    //MODIFIES: this
+    //EFFECTS: Chanegs cipherid
     public void useCipher(int index) {
         this.cipherId = index - 1;
     }
@@ -64,6 +61,7 @@ public class Account implements Writable {
         return userCiphers.size();
     }
 
+    //EFFECTS: Returns encrypted messages
     public List<SealedObject> getEncryptedMsgs() {
         if (userCiphers.size() == 1) {
             return userCiphers.get(0).getEncryptedMsgs();
@@ -75,6 +73,7 @@ public class Account implements Writable {
         return userid;
     }
 
+    // Output Json account data to a file
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
@@ -83,6 +82,7 @@ public class Account implements Writable {
         return json;
     }
 
+    //EFFECTS: creates and returns a json array on account data
     private JSONArray ciphersToJson() {
         JSONArray jsonArray = new JSONArray();
 
