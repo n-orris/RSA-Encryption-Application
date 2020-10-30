@@ -9,6 +9,7 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.concurrent.ThreadLocalRandom;
 
+// holds all encryption keys and methods
 public class CipherObj {
 
     KeyPair keyPair;

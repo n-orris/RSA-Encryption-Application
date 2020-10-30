@@ -2,15 +2,17 @@ package model;
 
 
 import javax.crypto.SealedObject;
+import java.util.ArrayList;
 import java.util.List;
 
+// An account which stores a users information and cypher objects
 public class Account {
     private String id;
-    private CipherObj userCipher;
+    private List<CipherObj> userCiphers = new ArrayList<>();
     private List<SealedObject> encryptedMsgs;
 
     public Account(CipherObj userCipher, List<SealedObject> encryptedMsgs, String id) {
-        this.userCipher = userCipher;
+        this.userCiphers.add(userCipher);
         this.encryptedMsgs = encryptedMsgs;
         this.id = id;
     }
@@ -32,8 +34,8 @@ public class Account {
     }
 
 
-    public CipherObj getAccountCipher() {
-        return userCipher;
+    public List<CipherObj> getAccountCipher() {
+        return userCiphers;
     }
 
     public List<SealedObject> getEncryptedMsgs() {

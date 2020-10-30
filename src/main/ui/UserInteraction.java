@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+// Controls all console user interaction
 public class UserInteraction {
     private Scanner consoleScanner = new Scanner(System.in);
     private CipherObj cipherObj;
@@ -16,7 +17,7 @@ public class UserInteraction {
     private Account account;
 
 
-
+    //EFFECTS: Starts the sequence of user interactions
     public void consoleInput() throws Exception {
         welcomeArt();
         initiateCipherObject();
@@ -41,7 +42,7 @@ public class UserInteraction {
         System.out.println("Select an option 1-3:");
     }
 
-    //REQUIRES:
+    //EFFECTS: inistantiates cipher object and
     public void initiateCipherObject() throws Exception {
         //inititate cipher object for this session
         cipherObj = new CipherObj();
@@ -58,6 +59,7 @@ public class UserInteraction {
         }
     }
 
+    //EFFECTS: Generates a keypair
     public void genKeyOption() {
         if (account != null) {
             System.out.println("Already contains valid keypair");
@@ -70,6 +72,7 @@ public class UserInteraction {
         }
     }
 
+    //EFFECTS: Takes user input keypair, returns second options if valid, returns to first options if not valid
     public void existingKeypair() throws Exception {
         System.out.println("Enter public key Modulus:");
         String pubKey = consoleScanner.nextLine();
@@ -92,6 +95,7 @@ public class UserInteraction {
     //MODIFIES: creates and inserts public key into cipherObj
     //EFFECTS:
 
+    //EFFECTS: prompts user to enter public key then message, encrypts message and displays it
     public void encryptWithPublic() {
         System.out.println("Please enter public modulus for encryption");
         String pubKey = consoleScanner.nextLine();
@@ -114,6 +118,7 @@ public class UserInteraction {
     //}
 
 
+    //EFFECTS: prompts user to enter option and then runs related option method
     public void keyOptions() {
         try {
             optionsText();
@@ -138,6 +143,7 @@ public class UserInteraction {
         }
     }
 
+    //EFFECTS: Prints options to console
     public void optionsText() {
         System.out.println();
         System.out.println("Options: ");
@@ -172,6 +178,7 @@ public class UserInteraction {
         keyOptions();
     }
 
+    //EFFECTS: Decrypts a sealed object, if no existing private key, prompts user to enter a key for decryption
     public void decrypt() {
         if (cipherObj.getPrivateKey() == null) {
             System.out.println("It appears you dont have a private key stored.");
@@ -191,6 +198,7 @@ public class UserInteraction {
 
     }
 
+    //EFFECTS: Displays current keypair to console, null if no keypair
     public void viewKeys() {
         System.out.println(cipherObj.getPublicKey());
         System.out.println(cipherObj.getPrivateKey());
@@ -213,8 +221,6 @@ public class UserInteraction {
             keyOptions();
         }
     }
-
-
 }
 
 
