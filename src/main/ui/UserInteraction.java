@@ -1,16 +1,15 @@
 package ui;
 
 
-
 import model.Account;
 import model.CipherObj;
-import org.json.JSONObject;
 import persistence.JsonReader;
 import persistence.JsonWriter;
-import persistence.Writable;
 
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 import java.io.FileNotFoundException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -94,8 +93,8 @@ public class UserInteraction {
         System.out.println("Enter private key exponent:");
         String privExp = consoleScanner.nextLine();
         cipherObj.createPublicKey(pubKey);
-        cipherObj.createPrivateKey(privMod,privExp);
-        if (cipherObj.validPair(cipherObj.getPublicKey(),cipherObj.getPrivateKey())) {
+        cipherObj.createPrivateKey(privMod, privExp);
+        if (cipherObj.validPair(cipherObj.getPublicKey(), cipherObj.getPrivateKey())) {
             System.out.println("Keypair succesfully added");
             keyOptions();
         } else {
@@ -148,7 +147,8 @@ public class UserInteraction {
             } else if (choice == 5) {
                 setCipher();
             } else if (choice == 6) {
-                addCipher();
+                System.out.println("Input cipher name: ");
+                addCipher(consoleScanner.nextLine());
             } else if (choice == 7) {
                 saveAccount();
             }
@@ -165,7 +165,7 @@ public class UserInteraction {
         System.out.println("3: View your Keys");
         System.out.println("4: Create Account");
         System.out.println("5: Set to specific cipher");
-        System.out.println("6: Add Cipher to account");
+        System.out.println("6: Create and add new cipher to account");
         System.out.println("7: Save Account");
         System.out.println();
         System.out.println("Please select 1-7, or 8 to exit program :");
@@ -182,39 +182,43 @@ public class UserInteraction {
             // creates a public key
             cipherObj.createPublicKey(modulus);
         }
-
         System.out.println("Please enter Message you would like to encrypt:");
         String msg = consoleScanner.nextLine();
-
-        SealedObject ciphertext = cipherObj.encryptText(msg);
-        sealedObjectList.add(ciphertext);
-        System.out.println("Your encrypted message is:");
-        System.out.println(ciphertext);
+        if (account == null) {
+            cipherObj.encryptText(msg);
+        } else {
+            account.getAccountCipher().encryptText(msg);
+        }
         keyOptions();
     }
 
     //EFFECTS: Decrypts a sealed object, if no existing private key, prompts user to enter a key for decryption
     public void decrypt() {
-        if (cipherObj.getPrivateKey() == null) {
-            System.out.println("It appears you dont have a private key stored.");
-            System.out.println("Please enter private key modulus:");
-            String modulus = consoleScanner.nextLine();
-            System.out.println("Please enter private key exponent");
-            String exponent = consoleScanner.nextLine();
-            // creates a public key
-            cipherObj.createPrivateKey(modulus, exponent);
-        }
-        System.out.println();
-        for (SealedObject sobj : sealedObjectList) {
-            System.out.println(cipherObj.decryptText(sobj));
+        if (account == null) {
+            System.out.println("null option");
+            for (SealedObject sobj : cipherObj.getEncryptedMsgs()) {
+                System.out.println(cipherObj.decryptText(sobj));
+            }
+        } else {
+            System.out.println(account.getAccountCipher().getEncryptedMsgs());
+            List<SealedObject> msgs = account.getAccountCipher().getEncryptedMsgs();
+
+            for (SealedObject obj : msgs) {
+                System.out.println(account.getAccountCipher().decryptText(obj));
+            }
         }
         keyOptions();
     }
 
     //EFFECTS: Displays current keypair to console, null if no keypair
     public void viewKeys() {
-        System.out.println(cipherObj.getPublicKey());
-        System.out.println(cipherObj.getPrivateKey());
+        if (account == null) {
+            System.out.println(cipherObj.getPublicKey());
+            System.out.println(cipherObj.getPrivateKey());
+        } else {
+            System.out.println(account.getAccountCipher().getPublicKey());
+            System.out.println(account.getAccountCipher().getPrivateKey());
+        }
         keyOptions();
     }
 
@@ -225,7 +229,7 @@ public class UserInteraction {
         if (cipherObj.validPair(cipherObj.getPublicKey(), cipherObj.getPrivateKey())) {
             System.out.println("Please enter username");
             String user = consoleScanner.nextLine();
-            account = new Account(cipherObj, sealedObjectList, user);
+            account = new Account(cipherObj, user);
             System.out.println("Account created succesfully");
             System.out.println();
             keyOptions();
@@ -236,17 +240,24 @@ public class UserInteraction {
     }
 
     //EFFECTS: Adds the current cipher object to an account, if no existing account warns user and returns to options
-    public void addCipher() {
+    public void addCipher(String name) throws NoSuchPaddingException, NoSuchAlgorithmException {
         if (account == null) {
             System.out.println("No account, Please create an account");
             keyOptions();
         } else {
-            account.newCipher(cipherObj, sealedObjectList);
+            CipherObj nm = new CipherObj();
+            nm.genKeyPair("RSA");
+            account.newCipher(nm, sealedObjectList);
             int size = account.getCipherSize();
             account.useCipher(size);
             System.out.println(account.getAccountCipher());
             System.out.println("Your cipher object was insert as cipher # " + size);
             System.out.println("To retrieve this cipher, remember its #");
+            account.useCipher(size);
+            account.getAccountCipher();
+            System.out.println("Now set to new cipher");
+            keyOptions();
+
         }
 
     }
@@ -272,7 +283,7 @@ public class UserInteraction {
             keyOptions();
         } catch (Exception e) {
             System.out.println("Not a valid Cipher, please try again");
-            keyOptions();
+            e.printStackTrace();
         }
     }
 

@@ -24,7 +24,7 @@ public class AccountTests {
         cipherObj = new CipherObj();
         cipherObj.genKeyPair("RSA");
         encryptedMsgs = new ArrayList<>();
-        account = new Account(cipherObj, encryptedMsgs, "Admin");
+        account = new Account(cipherObj, "Admin");
     }
 
 

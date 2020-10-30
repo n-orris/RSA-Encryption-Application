@@ -20,14 +20,10 @@ public class Account implements Writable {
     private JsonReader jsonReader;
     private JsonWriter jsonWriter;
 
-    public Account(CipherObj userCipher, List<SealedObject> encryptedMsgs, String id) {
+    public Account(CipherObj userCipher, String id) {
         this.userCiphers.add(userCipher);
-        userCiphers.get(0).setId(1);
-
-        this.encryptedMsgs.add(encryptedMsgs);
+        userCiphers.get(0).setId(0);
         this.userid = id;
-        this.cipherId = 1;
-
     }
 
     //MODIFIES: this
@@ -35,28 +31,28 @@ public class Account implements Writable {
     public void newCipher(CipherObj cipher, List<SealedObject> msgs) {
         userCiphers.add(cipher);
         int size = userCiphers.size();
-        userCiphers.get(size).setId(size);
+        userCiphers.get(size - 1).setId(size - 1);
     }
 
 
     //MODIFIES: this
     //EFFECTS: Add a SealedObject to encryptedMsgs Arraylist
     public void addEncryption(SealedObject encryptObj) {
-        encryptedMsgs.get(cipherId).add(encryptObj);
+        userCiphers.get(cipherId).addEncryption(encryptObj);
     }
 
     //MODIFIES: this
     //EFFECTS: Removes the arraylist object at index, catchs IndexOutOfBoundsException
     public void removeEncryption(int index) {
         try {
-            encryptedMsgs.remove(index);
+            userCiphers.get(cipherId).removeEncryption(index);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void useCipher(int index) {
-        this.cipherId = index;
+        this.cipherId = index - 1;
     }
 
 
@@ -65,11 +61,14 @@ public class Account implements Writable {
     }
 
     public int getCipherSize() {
-        return encryptedMsgs.size();
+        return userCiphers.size();
     }
 
     public List<SealedObject> getEncryptedMsgs() {
-        return encryptedMsgs.get(cipherId);
+        if (userCiphers.size() == 1) {
+            return userCiphers.get(0).getEncryptedMsgs();
+        }
+        return userCiphers.get(cipherId).getEncryptedMsgs();
     }
 
     public String getId() {

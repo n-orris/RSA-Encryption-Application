@@ -10,6 +10,8 @@ import java.math.BigInteger;
 import java.security.*;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 // holds all encryption keys and methods
@@ -21,10 +23,13 @@ public class CipherObj implements Writable {
     private Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");// Cipher object used to encrypt/decrypt
     private SealedObject encapsulatedMsg; // holds encrypted message
     private int cipherId;
+    private List<SealedObject> msgs; // list of encrypted msgs
 
 
     public CipherObj() throws NoSuchAlgorithmException, NoSuchPaddingException {
         this.cipherId = 1;
+        msgs = new ArrayList<>();
+
         // Algorithm and padding is hardcoded for phase 1, exceptions wont be an issue
     }
 
@@ -115,6 +120,18 @@ public class CipherObj implements Writable {
         return privateKey;
     }
 
+    public void addEncryption(SealedObject s) {
+        msgs.add(s);
+    }
+
+    public void removeEncryption(int index) {
+        msgs.remove(index);
+    }
+
+    public List<SealedObject> getEncryptedMsgs() {
+        return msgs;
+    }
+
     //returns the cipher in encrypt mode, if invalid public key returns null
     public Cipher getCipherEncrypt() {
         try {
@@ -149,6 +166,7 @@ public class CipherObj implements Writable {
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             // Add data to the cipher obj
             encapsulatedMsg = new SealedObject(text, cipher);
+            msgs.add(encapsulatedMsg);
             return encapsulatedMsg;
 
         } catch (Exception e) {
@@ -165,7 +183,7 @@ public class CipherObj implements Writable {
         try {
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
-            String msg = (String) sealedText.getObject(cipher);
+            String msg = (String) sealedText.getObject(privateKey);
 
             return msg;
         } catch (Exception e) {
@@ -173,6 +191,7 @@ public class CipherObj implements Writable {
         }
         return null;
     }
+
 
     // solution sourced from https://stackoverflow.com/questions/49426844/how-to-validate-a-public-and-private-key-pair-in-java
     // @user Peter Walser
@@ -208,9 +227,10 @@ public class CipherObj implements Writable {
         json.put("public", publicKey);
         json.put("private", privateKey);
         json.put("cipher", cipher);
-        json.put("message", encapsulatedMsg);
+        json.put("messages", msgs);
         return json;
     }
+
 }
 
 
