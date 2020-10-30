@@ -40,5 +40,6 @@
     </orderEntry>
     <orderEntry type="library" scope="TEST" name="BouncyCastleLib" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bcprov-jdk15on-166" level="project" />
+    <orderEntry type="library" name="JSON" level="project" />
   </component>
 </module>

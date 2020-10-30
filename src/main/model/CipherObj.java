@@ -1,5 +1,8 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
@@ -10,15 +13,18 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.concurrent.ThreadLocalRandom;
 
 // holds all encryption keys and methods
-public class CipherObj {
+public class CipherObj implements Writable {
 
     KeyPair keyPair;
     private PublicKey publicKey;
     private PrivateKey privateKey;
     private Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");// Cipher object used to encrypt/decrypt
     private SealedObject encapsulatedMsg; // holds encrypted message
+    private int cipherId;
+
 
     public CipherObj() throws NoSuchAlgorithmException, NoSuchPaddingException {
+        this.cipherId = 1;
         // Algorithm and padding is hardcoded for phase 1, exceptions wont be an issue
     }
 
@@ -67,6 +73,11 @@ public class CipherObj {
             e.printStackTrace();
         }
         return null;
+    }
+
+    //SETS Id for the cipher object
+    public void setId(int id) {
+        this.cipherId = id;
     }
 
     // Sourced from: https://stackoverflow.com/questions/28204659/how-to-get-public-rsa-key-from-unformatted-string
@@ -188,7 +199,20 @@ public class CipherObj {
         }
         return false;
     }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("id", cipherId);
+        json.put("keyPair", keyPair);
+        json.put("public", publicKey);
+        json.put("private", privateKey);
+        json.put("cipher", cipher);
+        json.put("message", encapsulatedMsg);
+        return json;
+    }
 }
+
 
 
 

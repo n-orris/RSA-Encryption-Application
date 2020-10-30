@@ -6,8 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,5 +66,10 @@ public class AccountTests {
         } catch (Exception ee) {
             fail("Tried to remove from null array");
         } //nothing to do here
+    }
+
+    @Test
+    void newCipherTest() throws Exception {
+        CipherObj testC = new CipherObj();
     }
 }

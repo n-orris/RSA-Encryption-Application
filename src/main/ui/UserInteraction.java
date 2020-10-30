@@ -4,7 +4,13 @@ package ui;
 
 import model.Account;
 import model.CipherObj;
+import org.json.JSONObject;
+import persistence.JsonReader;
+import persistence.JsonWriter;
+import persistence.Writable;
+
 import javax.crypto.SealedObject;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -12,13 +18,18 @@ import java.util.Scanner;
 // Controls all console user interaction
 public class UserInteraction {
     private Scanner consoleScanner = new Scanner(System.in);
+    private static final String JSON_STORE = "./data/storeuser.json";
     private CipherObj cipherObj;
     private List<SealedObject> sealedObjectList = new ArrayList<>();
     private Account account;
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
 
 
     //EFFECTS: Starts the sequence of user interactions
-    public void consoleInput() throws Exception {
+    public UserInteraction() throws Exception {
+        jsonWriter = new JsonWriter(JSON_STORE);
+        //jsonReader = new JsonReader(JSON_STORE);
         welcomeArt();
         initiateCipherObject();
 
@@ -36,10 +47,11 @@ public class UserInteraction {
         System.out.println();
         System.out.println("Options:");
         System.out.println("1: Generate keypair (New Account)");
-        System.out.println("2: Enter existing keypair");
-        System.out.println("3: Encrypt with public key");
+        System.out.println("2: Login to existing account");
+        System.out.println("3: Enter existing keypair");
+        System.out.println("4: Encrypt with public key");
         System.out.println();
-        System.out.println("Select an option 1-3:");
+        System.out.println("Select an option 1-4:");
     }
 
     //EFFECTS: inistantiates cipher object and
@@ -53,23 +65,24 @@ public class UserInteraction {
         if (num == 1) {
             genKeyOption();
         } else if (num == 2) {
-            existingKeypair();
+            login();
         } else if (num == 3) {
+            existingKeypair();
+        } else if (num == 4) {
             encryptWithPublic();
         }
     }
 
     //EFFECTS: Generates a keypair
     public void genKeyOption() {
-        if (account != null) {
-            System.out.println("Already contains valid keypair");
-            keyOptions();
-        } else {
+        cipherObj.genKeyPair("RSA");
+        System.out.println("New Public/Private keypair generated");
+        keyOptions();
 
-            cipherObj.genKeyPair("RSA");
-            System.out.println("New Public/Private keypair generated");
-            keyOptions();
-        }
+    }
+
+    public void login() {
+
     }
 
     //EFFECTS: Takes user input keypair, returns second options if valid, returns to first options if not valid
@@ -124,7 +137,6 @@ public class UserInteraction {
             optionsText();
             int choice = consoleScanner.nextInt();
             consoleScanner.nextLine();
-
             if (choice == 1) {
                 encrypt();
             } else if (choice == 2) {
@@ -134,9 +146,11 @@ public class UserInteraction {
             } else if (choice == 4) {
                 createAccount();
             } else if (choice == 5) {
-                genKeyOption();
-            } else {
-                System.out.println("Invalid program");
+                setCipher();
+            } else if (choice == 6) {
+                addCipher();
+            } else if (choice == 7) {
+                saveAccount();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,15 +159,16 @@ public class UserInteraction {
 
     //EFFECTS: Prints options to console
     public void optionsText() {
-        System.out.println();
         System.out.println("Options: ");
         System.out.println("1: Encrypt Message");
         System.out.println("2: Decrypt stored Messages");
         System.out.println("3: View your Keys");
         System.out.println("4: Create Account");
-        System.out.println("5: Generate Keypair");
+        System.out.println("5: Set to specific cipher");
+        System.out.println("6: Add Cipher to account");
+        System.out.println("7: Save Account");
         System.out.println();
-        System.out.println("Please select a number :");
+        System.out.println("Please select 1-7, or 8 to exit program :");
     }
 
     //MODIFIES: Assigns encrypted value to cipherObj instance
@@ -194,8 +209,6 @@ public class UserInteraction {
             System.out.println(cipherObj.decryptText(sobj));
         }
         keyOptions();
-
-
     }
 
     //EFFECTS: Displays current keypair to console, null if no keypair
@@ -221,6 +234,48 @@ public class UserInteraction {
             keyOptions();
         }
     }
+
+    //EFFECTS: Adds the current cipher object to an account, if no existing account warns user and returns to options
+    public void addCipher() {
+        if (account == null) {
+            System.out.println("No account, Please create an account");
+            keyOptions();
+        } else {
+            account.newCipher(cipherObj, sealedObjectList);
+            int size = account.getCipherSize();
+            account.useCipher(size);
+            System.out.println(account.getAccountCipher());
+            System.out.println("Your cipher object was insert as cipher # " + size);
+            System.out.println("To retrieve this cipher, remember its #");
+        }
+
+    }
+
+    public void saveAccount() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(account);
+            jsonWriter.close();
+            System.out.println("Saved " + account.getId() + " to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
+
+    }
+
+    public void setCipher() {
+        System.out.println("Please enter id of cipher you would like to use");
+        int id = consoleScanner.nextInt();
+        try {
+            account.useCipher(id);
+            System.out.println("Cipher #" + id + " set");
+            keyOptions();
+        } catch (Exception e) {
+            System.out.println("Not a valid Cipher, please try again");
+            keyOptions();
+        }
+    }
+
 }
 
 
