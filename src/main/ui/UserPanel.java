@@ -2,8 +2,10 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class UserPanel extends JFrame {
+public class UserPanel extends JFrame implements ActionListener {
     private JFrame frame;
     private JPanel panel;
     private JButton button1;
@@ -13,6 +15,15 @@ public class UserPanel extends JFrame {
     private JButton button5;
     private JMenuBar jmenu;
     private JLabel label;
+
+    JButton viewKeys = new JButton(new AbstractAction("View Keys") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("button1 test");
+
+        }
+    });
+
 
     public UserPanel() {
         frame = new JFrame();
@@ -25,6 +36,8 @@ public class UserPanel extends JFrame {
         button5 = new JButton("Save Account");
 
         label = new JLabel("Options");
+
+        viewKeys.addActionListener(this::actionPerformed);
 
 
         panel.setBorder(BorderFactory.createEmptyBorder(200, 300, 200, 300));
@@ -39,11 +52,18 @@ public class UserPanel extends JFrame {
     }
 
     public void addButtons() {
-        panel.add(button1);
+        panel.add(viewKeys);
         panel.add(button2);
         panel.add(button3);
         panel.add(button4);
         panel.add(button5);
+
+    }
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
 
     }
 }
