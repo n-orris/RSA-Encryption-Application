@@ -80,8 +80,6 @@ public class JsonReader {
             privExp = jsonObject.getString("private").substring(695, 1311);
         }
         String pub = jsonObject.getString("public");
-        System.out.println(privateModulus);
-        System.out.println(privExp);
 
         cipherObj.createPublicKey(pub.substring(56, 673));
         cipherObj.createPrivateKey(privateModulus, privExp);

@@ -1,6 +1,5 @@
 package model;
 
-import org.bouncycastle.util.encoders.Base64;
 import org.json.JSONObject;
 import persistence.Writable;
 
@@ -13,10 +12,9 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 // holds all encryption keys and methods
 public class CipherObj implements Writable {

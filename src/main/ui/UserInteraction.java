@@ -3,6 +3,7 @@ package ui;
 
 import model.Account;
 import model.CipherObj;
+import org.bouncycastle.jcajce.provider.asymmetric.rsa.RSAUtil;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -24,15 +25,31 @@ public class UserInteraction {
     private Account account;
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
+    private LoginWindow loginWindow;
+    private UserPanel userPanel;
 
 
     //EFFECTS: Starts the sequence of user interactions
     public UserInteraction() throws Exception {
+
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
-        welcomeArt();
-        initiateCipherObject();
+        loginWindow = new LoginWindow();
+        Thread.sleep(2500);
+        if (loginWindow.requestLogin()) {
+//            login();
+//            welcomeArt();
+//            initiateCipherObject();
+            openUserPanel();
+        } else {
+            System.out.println("test");
+        }
+    }
 
+    public void openUserPanel() {
+        System.out.println("User Page displayed");
+        userPanel = new UserPanel();
+        userPanel.getContentPane();
     }
 
     //EFFECTS: prints out key image and welcome text to console
@@ -53,6 +70,7 @@ public class UserInteraction {
         System.out.println();
         System.out.println("Select an option 1-4:");
     }
+
 
     //EFFECTS: inistantiates cipher object and
     public void initiateCipherObject() throws Exception {
