@@ -5,22 +5,10 @@ import model.CipherObj;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SealedObject;
-import java.io.*;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import java.util.stream.Stream;
 
 // File Reader for JSON persistence based off of JsonSerializationDemo
@@ -58,8 +46,8 @@ public class JsonReader {
         JSONArray jsonArray = jsonObject.getJSONArray("Ciphers");
         JSONObject first = (JSONObject) jsonArray.get(0);
         CipherObj ciph = new CipherObj();
-        ciph.genKeyPair("RSA");
-        Account ac = new Account(ciph, userId);
+//        ciph.genKeyPair("RSA");
+        Account ac = new Account(userId);
         addCiphers(ac, jsonObject);
         return ac;
     }
@@ -79,10 +67,21 @@ public class JsonReader {
     private void addCipher(Account ac, JSONObject jsonObject) throws Exception {
         CipherObj cipherObj = new CipherObj();
         int id = jsonObject.getInt("id");
-        String priv = jsonObject.getString("private");
-        String privateModulus = priv.substring(68, 685);
-        String privExp = priv.substring(707);
+        int idCipher = jsonObject.getInt("id");
+        String privateModulus = null;
+        String privExp = null;
+
+
+        if (jsonObject.getString("private").contains("SunRsaSign")) {
+            privateModulus = jsonObject.getString("private").substring(68, 685);
+            privExp = jsonObject.getString("private").substring(706);
+        } else {
+            privateModulus = jsonObject.getString("private").substring(57, 674);
+            privExp = jsonObject.getString("private").substring(695, 1311);
+        }
         String pub = jsonObject.getString("public");
+        System.out.println(privateModulus);
+        System.out.println(privExp);
 
         cipherObj.createPublicKey(pub.substring(56, 673));
         cipherObj.createPrivateKey(privateModulus, privExp);

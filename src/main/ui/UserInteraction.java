@@ -56,8 +56,7 @@ public class UserInteraction {
 
     //EFFECTS: inistantiates cipher object and
     public void initiateCipherObject() throws Exception {
-        //inititate cipher object for this session
-        cipherObj = new CipherObj();
+
         // Takes user input
         int num = consoleScanner.nextInt();
         consoleScanner.nextLine();
@@ -74,7 +73,8 @@ public class UserInteraction {
     }
 
     //EFFECTS: Generates a keypair
-    public void genKeyOption() {
+    public void genKeyOption() throws NoSuchPaddingException, NoSuchAlgorithmException {
+        cipherObj = new CipherObj();
         cipherObj.genKeyPair("RSA");
         System.out.println("New Public/Private keypair generated");
         keyOptions();
@@ -93,7 +93,7 @@ public class UserInteraction {
         } catch (IOException e) {
             System.out.println("Unable to read from file: " + JSON_STORE);
         } catch (Exception e) {
-            e.printStackTrace();
+            //
         }
         keyOptions();
 
@@ -204,12 +204,10 @@ public class UserInteraction {
     //EFFECTS: Decrypts a sealed object, if no existing private key, prompts user to enter a key for decryption
     public void decrypt() {
         if (account == null) {
-            System.out.println("null option");
             for (SealedObject sobj : cipherObj.getEncryptedMsgs()) {
                 System.out.println(cipherObj.decryptText(sobj));
             }
         } else {
-            System.out.println(account.getAccountCipher().getEncryptedMsgs());
             List<SealedObject> msgs = account.getAccountCipher().getEncryptedMsgs();
 
             for (SealedObject obj : msgs) {
@@ -238,7 +236,8 @@ public class UserInteraction {
         if (cipherObj.validPair(cipherObj.getPublicKey(), cipherObj.getPrivateKey())) {
             System.out.println("Please enter username");
             String user = consoleScanner.nextLine();
-            account = new Account(cipherObj, user);
+            account = new Account(user);
+            account.newCipher(cipherObj);
             System.out.println("Account created succesfully");
             System.out.println();
             keyOptions();

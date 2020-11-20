@@ -23,7 +23,8 @@ public class AccountTests {
         //All relevant exceptions already tested for cipherobj so not need to test exceptions here
         cipherObj = new CipherObj();
         cipherObj.genKeyPair("RSA");
-        account = new Account(cipherObj, "Admin");
+        account = new Account("Admin");
+        account.newCipher(cipherObj);
     }
 
 

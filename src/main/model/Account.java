@@ -21,9 +21,7 @@ public class Account implements Writable {
     private JsonWriter jsonWriter;
 
     //EFFECTS: Constructs a new account with 1 cipherobj
-    public Account(CipherObj userCipher, String id) {
-        this.userCiphers.add(userCipher);
-        userCiphers.get(0).setId(0);
+    public Account(String id) {
         this.userid = id;
     }
 

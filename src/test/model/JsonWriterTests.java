@@ -6,7 +6,7 @@ import persistence.JsonReader;
 import persistence.JsonWriter;
 import persistence.Writable;
 
-
+//
 import javax.crypto.NoSuchPaddingException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,6 +38,8 @@ public class JsonWriterTests {
         } catch (FileNotFoundException e) {
             fail("valid file");
         }
+        String t = "Sun RSA private key, 2048 bits\n  params: null\n  modulus: ";
+        System.out.println(t.length());
 
         try {
             writer = new PrintWriter(new File(badDestination));
@@ -52,7 +54,8 @@ public class JsonWriterTests {
     void writerEmptyFile() {
         try {
             cipherObj.genKeyPair("RSA");
-            Account ac = new Account(cipherObj, "user");
+            Account ac = new Account("user");
+            ac.newCipher(cipherObj);
             JsonWriter writer = new JsonWriter("./data/writertest.jso");
             writer.open();
             writer.write(ac);
@@ -73,7 +76,8 @@ public class JsonWriterTests {
     void testWriterExistingFile() {
         try {
             cipherObj.genKeyPair("RSA");
-            Account ac = new Account(cipherObj, "user");
+            Account ac = new Account("user");
+            ac.newCipher(cipherObj);
             CipherObj test1 = new CipherObj();
             CipherObj test2 = new CipherObj();
             test1.genKeyPair("RSA");
