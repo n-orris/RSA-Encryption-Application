@@ -105,5 +105,19 @@ public class JsonWriterTests {
         }
     }
 
+    @Test
+    void jsonReaderTest() throws NoSuchPaddingException, NoSuchAlgorithmException {
+        cipherObj.genKeyPair("RSA");
+        Account ac = new Account("user");
+        ac.newCipher(cipherObj);
+        CipherObj test1 = new CipherObj();
+        CipherObj test2 = new CipherObj();
+        test1.genKeyPair("RSA");
+        test2.genKeyPair("RSA");
+        ac.newCipher(test1);
+        ac.newCipher(test2);
+
+    }
+
 
 }

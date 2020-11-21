@@ -49,6 +49,7 @@ public class UserInteraction {
         }
     }
 
+    //EFFECTS: create a new userpanel and then displays it
     public void openUserPanel() throws NoSuchPaddingException, NoSuchAlgorithmException, InterruptedException {
         System.out.println("User Page displayed");
         userPanel = new UserPanel();
@@ -56,6 +57,7 @@ public class UserInteraction {
         userActions();
     }
 
+    //EFFECTS: returns a useraction based of GUI input
     public void userActions() throws NoSuchAlgorithmException, NoSuchPaddingException, InterruptedException {
 
         while (true) {
@@ -70,7 +72,8 @@ public class UserInteraction {
                 break;
             } else if (userPanel.getAction("addNewKey")) {
                 System.out.println("Adding New Key...");
-                addCipher("new");
+                addCipher();
+                openUserPanel();
                 break;
             } else if (userPanel.getAction("saveProfile")) {
                 System.out.println("Saving Account...");
@@ -206,7 +209,7 @@ public class UserInteraction {
                 setCipher();
             } else if (choice == 6) {
                 System.out.println("Input cipher name: ");
-                addCipher(consoleScanner.nextLine());
+                addCipher();
             } else if (choice == 7) {
                 saveAccount();
             }
@@ -287,7 +290,7 @@ public class UserInteraction {
     }
 
     //EFFECTS: Adds the current cipher object to an account, if no existing account warns user and returns to options
-    public void addCipher(String name) throws NoSuchPaddingException, NoSuchAlgorithmException {
+    public void addCipher() throws NoSuchPaddingException, NoSuchAlgorithmException {
         if (account == null) {
             System.out.println("No account, Please create an account");
             keyOptions();
@@ -303,8 +306,6 @@ public class UserInteraction {
             account.useCipher(size);
             account.getAccountCipher();
             System.out.println("Now set to new cipher");
-            keyOptions();
-
         }
 
     }
@@ -325,6 +326,7 @@ public class UserInteraction {
 
     // Sets which CipherObj to use
 
+    //EFFECTS Sets the current Cipher
     public void setCipher() {
         System.out.println("Please enter id of cipher you would like to use");
         int id = consoleScanner.nextInt();

@@ -17,6 +17,8 @@ public class LoginWindow extends JFrame implements ActionListener {
 
     JButton newAccount = new JButton(new AbstractAction("New Account") {
         @Override
+        //MDOFIES: this
+        //EFFECTS: Changes the boolean field createAccount to true and closes gui window
         public void actionPerformed(ActionEvent e) {
             createAccount = true;
             logRequest = false;
@@ -27,6 +29,8 @@ public class LoginWindow extends JFrame implements ActionListener {
 
     JButton loadAccount = new JButton(new AbstractAction("Load Account") {
         @Override
+        // MODIFIES: this
+        // EFFECTS: Changes the boolean field logRequest to true and closes the gui window
         public void actionPerformed(ActionEvent e) {
             createAccount = false;
             logRequest = true;
@@ -60,17 +64,20 @@ public class LoginWindow extends JFrame implements ActionListener {
         frame.setVisible(true);
     }
 
+    //EFFECTS: returns boolean login field
     public boolean requestLogin() {
         return logRequest;
 
     }
 
+    //EFFECTS : returns createAccoutn field
     public boolean requestNewAccount() {
         return createAccount;
     }
 
 
     @Override
+    //EFFECTS: placeholder for actionformed
     public void actionPerformed(ActionEvent e) {
 
     }
