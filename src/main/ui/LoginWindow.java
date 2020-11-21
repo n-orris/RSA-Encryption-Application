@@ -13,25 +13,49 @@ public class LoginWindow extends JFrame implements ActionListener {
     private JButton button;
     private JLabel label;
     private boolean logRequest;
+    private boolean createAccount = false;
+
+    JButton newAccount = new JButton(new AbstractAction("New Account") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            createAccount = true;
+            logRequest = false;
+            panel.setVisible(false);
+            frame.setVisible(false);
+        }
+    });
+
+    JButton loadAccount = new JButton(new AbstractAction("Load Account") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            createAccount = false;
+            logRequest = true;
+            panel.setVisible(false);
+            frame.setVisible(false);
+        }
+    });
 
 
     // Constructs application window
     public LoginWindow() throws Exception {
         frame = new JFrame();
         panel = new JPanel();
-        button = new JButton("Login");
-        button.addActionListener(this);
+
         label = new JLabel("Login");
 
+        // button operations
+        newAccount.addActionListener(this::actionPerformed);
+        loadAccount.addActionListener(this::actionPerformed);
 
         panel.setBorder(BorderFactory.createEmptyBorder(500, 500, 500, 500));
         panel.setLayout(new GridLayout());
-        panel.add(button);
+        panel.add(newAccount);
+        panel.add(loadAccount);
 
 
         frame.add(panel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("ULock");
+        frame.setTitle("ULock Login");
         frame.pack();
         frame.setVisible(true);
     }
@@ -41,12 +65,14 @@ public class LoginWindow extends JFrame implements ActionListener {
 
     }
 
+    public boolean requestNewAccount() {
+        return createAccount;
+    }
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println("Logging in....");
-        logRequest = true;
-        panel.setVisible(false);
-        frame.setVisible(false);
+
     }
 
 

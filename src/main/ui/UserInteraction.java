@@ -26,6 +26,7 @@ public class UserInteraction {
     private JsonReader jsonReader;
     private LoginWindow loginWindow;
     private UserPanel userPanel;
+    private UserKeysPanel userKeysPanel;
 
 
     //EFFECTS: Starts the sequence of user interactions
@@ -34,21 +35,49 @@ public class UserInteraction {
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         loginWindow = new LoginWindow();
-        Thread.sleep(2500);
-        if (loginWindow.requestLogin()) {
-//            login();
-//            welcomeArt();
-//            initiateCipherObject();
-            openUserPanel();
-        } else {
-            System.out.println("test");
+        while (true) {
+            Thread.sleep(2500);
+            if (loginWindow.requestLogin()) {
+                login();
+                openUserPanel();
+            } else if (loginWindow.requestNewAccount()) {
+                System.out.println("Creating New Account...");
+                genKeyOption();
+                createAccount();
+                openUserPanel();
+            }
         }
     }
 
-    public void openUserPanel() {
+    public void openUserPanel() throws NoSuchPaddingException, NoSuchAlgorithmException, InterruptedException {
         System.out.println("User Page displayed");
         userPanel = new UserPanel();
         userPanel.getContentPane();
+        userActions();
+    }
+
+    public void userActions() throws NoSuchAlgorithmException, NoSuchPaddingException, InterruptedException {
+
+        while (true) {
+            Thread.sleep(2500);
+            if (userPanel.getAction("displayKeys")) {
+                System.out.println("Displaying keys....");
+                userKeysPanel = new UserKeysPanel(account);
+                break;
+            } else if (userPanel.getAction("setKey")) {
+                System.out.println("Setting Key.....");
+                setCipher();
+                break;
+            } else if (userPanel.getAction("addNewKey")) {
+                System.out.println("Adding New Key...");
+                addCipher("new");
+                break;
+            } else if (userPanel.getAction("saveProfile")) {
+                System.out.println("Saving Account...");
+                saveAccount();
+                break;
+            }
+        }
     }
 
     //EFFECTS: prints out key image and welcome text to console
@@ -94,7 +123,6 @@ public class UserInteraction {
         cipherObj = new CipherObj();
         cipherObj.genKeyPair("RSA");
         System.out.println("New Public/Private keypair generated");
-        keyOptions();
 
     }
 
@@ -112,8 +140,6 @@ public class UserInteraction {
         } catch (Exception e) {
             //
         }
-        keyOptions();
-
     }
 
     //EFFECTS: Takes user input keypair, returns second options if valid, returns to first options if not valid
@@ -257,10 +283,6 @@ public class UserInteraction {
             account.newCipher(cipherObj);
             System.out.println("Account created succesfully");
             System.out.println();
-            keyOptions();
-        } else {
-            System.out.println("Invalid key pair,please generate key pair");
-            keyOptions();
         }
     }
 

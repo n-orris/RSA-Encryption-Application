@@ -67,6 +67,10 @@ public class Account implements Writable {
         return userCiphers.get(cipherId).getEncryptedMsgs();
     }
 
+    public List<CipherObj> getCiphers() {
+        return userCiphers;
+    }
+
     public String getId() {
         return userid;
     }
@@ -79,6 +83,7 @@ public class Account implements Writable {
         json.put("Ciphers", ciphersToJson());
         return json;
     }
+
 
     //EFFECTS: creates and returns a json array on account data
     private JSONArray ciphersToJson() {

@@ -8,55 +8,94 @@ import java.awt.event.ActionListener;
 public class UserPanel extends JFrame implements ActionListener {
     private JFrame frame;
     private JPanel panel;
-    private JButton button1;
-    private JButton button2;
-    private JButton button3;
-    private JButton button4;
-    private JButton button5;
-    private JMenuBar jmenu;
+    private boolean displayKeys = false;
+    private boolean setKey = false;
+    private boolean addNewKey = false;
+    private boolean saveProfile = false;
     private JLabel label;
 
-    JButton viewKeys = new JButton(new AbstractAction("View Keys") {
+    JButton viewKeysButton = new JButton(new AbstractAction("View Keys") {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("button1 test");
+            displayKeys = true;
+            setKey = false;
+            addNewKey = false;
+            saveProfile = false;
+        }
+    });
+
+    JButton setKeypairButton = new JButton(new AbstractAction("Set Keypair") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            displayKeys = false;
+            setKey = true;
+            addNewKey = false;
+            saveProfile = false;
 
         }
     });
 
+    JButton addNewCipherObjButton = new JButton(new AbstractAction("Add New Keypair") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            displayKeys = false;
+            setKey = false;
+            addNewKey = true;
+            saveProfile = false;
+        }
+    });
+
+    JButton saveAccountButton = new JButton(new AbstractAction("Save Profile") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            displayKeys = false;
+            setKey = false;
+            addNewKey = false;
+            saveProfile = true;
+        }
+    });
 
     public UserPanel() {
         frame = new JFrame();
         panel = new JPanel();
-        jmenu = new JMenuBar();
-        button1 = new JButton("View keys");
-        button2 = new JButton("Create Account");
-        button3 = new JButton("Set Keyset");
-        button4 = new JButton("Add new Keyset");
-        button5 = new JButton("Save Account");
-
         label = new JLabel("Options");
 
-        viewKeys.addActionListener(this::actionPerformed);
+        viewKeysButton.addActionListener(this::actionPerformed);
+        setKeypairButton.addActionListener(this::actionPerformed);
+        addNewCipherObjButton.addActionListener(this::actionPerformed);
+        saveAccountButton.addActionListener(this::actionPerformed);
 
 
-        panel.setBorder(BorderFactory.createEmptyBorder(200, 300, 200, 300));
+        panel.setBorder(BorderFactory.createEmptyBorder(50, 150, 50, 150));
         panel.setLayout(new GridLayout());
         addButtons();
         frame.add(panel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("ULock");
+        frame.setTitle("User Dashboard");
         frame.pack();
         frame.setVisible(true);
 
     }
 
+    public boolean getAction(String action) {
+        if (action.equals("displayKeys")) {
+            return displayKeys;
+        } else if (action.equals("setKey")) {
+            return setKey;
+        } else if (action.equals("addNewKey")) {
+            return addNewKey;
+        } else if (action.equals("saveProfile")) {
+            return saveProfile;
+        }
+        return false;
+    }
+
     public void addButtons() {
-        panel.add(viewKeys);
-        panel.add(button2);
-        panel.add(button3);
-        panel.add(button4);
-        panel.add(button5);
+        panel.add(viewKeysButton);
+        panel.add(setKeypairButton);
+        panel.add(addNewCipherObjButton);
+        panel.add(saveAccountButton);
+
 
     }
 
