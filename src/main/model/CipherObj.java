@@ -100,26 +100,26 @@ public class CipherObj implements Writable {
     public PrivateKey createPrivateKey(String stringPrivateKey, String privateExponent) throws PrivateKeyException {
 
         try {
-            if ((stringPrivateKey.length() == 617 || stringPrivateKey.length() == 616) &&
-                    (privateExponent.length() == 617 || privateExponent.length() == 616)) {
-            BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
-            BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
-            RSAPrivateKeySpec keySpeck = new RSAPrivateKeySpec(keyInt, exponentInt);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            // Inserts into public key slot
-            privateKey = keyFactory.generatePrivate(keySpeck);
-            return privateKey;
+            if ((stringPrivateKey.length() == 617 || stringPrivateKey.length() == 616)
+                    && (privateExponent.length() == 617 || privateExponent.length() == 616)) {
+                BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
+                BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
+                RSAPrivateKeySpec keySpeck = new RSAPrivateKeySpec(keyInt, exponentInt);
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                // Inserts into public key slot
+                privateKey = keyFactory.generatePrivate(keySpeck);
+                return privateKey;
 
-        } else {
-            throw new PrivateKeyException("Invalid key string length");
+            } else {
+                throw new PrivateKeyException("Invalid key string length");
+            }
+        } catch (InvalidKeySpecException e) {
+            throw new PrivateKeyException("Invalid Private key string, please enter valid key");
+        } catch (NoSuchAlgorithmException e) {
+            throw new PrivateKeyException("RSA Algorithm no supported");
+        } catch (NumberFormatException e) {
+            throw new PrivateKeyException("Key string should not contain letters");
         }
-    } catch (InvalidKeySpecException e) {
-        throw new PrivateKeyException("Invalid Private key string, please enter valid key");
-    } catch (NoSuchAlgorithmException e) {
-        throw new PrivateKeyException("RSA Algorithm no supported");
-    } catch (NumberFormatException e) {
-        throw new PrivateKeyException("Key string should not contain letters");
-    }
     }
 
 
@@ -149,18 +149,24 @@ public class CipherObj implements Writable {
     }
 
     //returns the cipher in encrypt mode, if invalid public key returns null
-    public Cipher getCipherEncrypt() throws InvalidKeyException {
+    public Cipher getCipherEncrypt() throws PublicKeyException {
+        try {
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             return cipher;
-
+        } catch (InvalidKeyException e) {
+            throw new PublicKeyException("Cipher cannot be initiated with invalid public key");
+        }
     }
 
     //EFFECTS: retrieves the cipher in decrypt mode, if invalid private key returns null
-    public Cipher getCipherDecrypt() throws InvalidKeyException {
+    public Cipher getCipherDecrypt() throws PrivateKeyException {
+        try {
 
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             return cipher;
-
+        } catch (InvalidKeyException e) {
+            throw new PrivateKeyException("Cipher cannot be initiated with invalid public key");
+        }
     }
 
 

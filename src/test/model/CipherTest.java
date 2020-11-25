@@ -201,14 +201,16 @@ public class CipherTest {
 
         try {
             invalidCipher.getCipherEncrypt();
-        } catch (Exception e) {
+            fail("No public key, exception expected");
+        } catch (PublicKeyException e) {
+            //PASS
 
         }
 
         try {
             testObj.getCipherEncrypt();
         } catch (Exception e) {
-            fail("valid cipher should be active");
+            fail("valid public and cipher should be active");
         }
 
 
@@ -220,13 +222,16 @@ public class CipherTest {
 
     @Test
     void getCipherDecryptTest() throws Exception {
-        testObj.createPrivateKey("Invalid Key to set key to null", "test.test");
+        testObj.genKeyPair("RSA");
         try {
             invalidCipher.getCipherDecrypt();
+            fail("No private key, exception expected");
         } catch (Exception e) {
+            //PASS
         }
         try {
             testObj.getCipherDecrypt();
+            //PASS
         } catch (Exception e) {
             fail("Should have valid private key");
         }
