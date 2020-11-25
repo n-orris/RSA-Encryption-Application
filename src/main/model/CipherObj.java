@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.PrivateKeyException;
+import exceptions.PublicKeyException;
 import org.json.JSONObject;
 import persistence.Writable;
 
@@ -8,6 +10,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 import java.math.BigInteger;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
@@ -31,14 +34,12 @@ public class CipherObj implements Writable {
     public CipherObj() throws NoSuchAlgorithmException, NoSuchPaddingException {
         this.cipherId = 1;
         msgs = new ArrayList<>();
-
     }
 
 
     //MODIFIES: this
     //EFFECTS: Generates an encrypted pair of keys and stores them in keypair,publicKey, and privateKey
     public void genKeyPair(String algorithm) {
-        //throws exception but algorithm is hardcoded so exception will not be an issue
         try {
             // generates secure random number
             SecureRandom secRandom = new SecureRandom();
@@ -62,7 +63,7 @@ public class CipherObj implements Writable {
     //MODIFIES: this
     //EFFECTS: creates a public key from modulus and exponent args. assigns the key to the publicKey field and returns
     //true if key succesfully created/replaced
-    public PublicKey createPublicKey(String stringPublicKey) {
+    public PublicKey createPublicKey(String stringPublicKey) throws PublicKeyException {
         try {
             if (stringPublicKey.length() == 617) {
                 BigInteger keyInt = new BigInteger(stringPublicKey, 10); // hex base
@@ -73,12 +74,16 @@ public class CipherObj implements Writable {
                 publicKey = keyFactory.generatePublic(keySpeck);
                 return publicKey;
             } else {
-                return null;
+                throw new PublicKeyException("Invalid key string length");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            throw new PublicKeyException("Invalid Public key string, please enter valid key");
+        } catch (NoSuchAlgorithmException e) {
+            throw new PublicKeyException("RSA Algorithm no supported");
+        } catch (NumberFormatException e) {
+            throw new PublicKeyException("Key string should not contain letters");
         }
-        return null;
+
     }
 
     //SETS Id for the cipher object
@@ -92,9 +97,11 @@ public class CipherObj implements Writable {
     //MODIFIES: this
     //EFFECTS: creates a private key from modulus and exponent args. assigns the key to the privateKey field and returns
     //true if key succesfully created/replaced
-    public PrivateKey createPrivateKey(String stringPrivateKey, String privateExponent) {
+    public PrivateKey createPrivateKey(String stringPrivateKey, String privateExponent) throws PrivateKeyException {
 
         try {
+            if ((stringPrivateKey.length() == 617 || stringPrivateKey.length() == 616) &&
+                    (privateExponent.length() == 617 || privateExponent.length() == 616)) {
             BigInteger keyInt = new BigInteger(stringPrivateKey, 10); // hex base
             BigInteger exponentInt = new BigInteger(privateExponent, 10); // decimal base
             RSAPrivateKeySpec keySpeck = new RSAPrivateKeySpec(keyInt, exponentInt);
@@ -103,11 +110,16 @@ public class CipherObj implements Writable {
             privateKey = keyFactory.generatePrivate(keySpeck);
             return privateKey;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            throw new PrivateKeyException("Invalid key string length");
         }
-        privateKey = null;
-        return null;
+    } catch (InvalidKeySpecException e) {
+        throw new PrivateKeyException("Invalid Private key string, please enter valid key");
+    } catch (NoSuchAlgorithmException e) {
+        throw new PrivateKeyException("RSA Algorithm no supported");
+    } catch (NumberFormatException e) {
+        throw new PrivateKeyException("Key string should not contain letters");
+    }
     }
 
 
@@ -137,25 +149,18 @@ public class CipherObj implements Writable {
     }
 
     //returns the cipher in encrypt mode, if invalid public key returns null
-    public Cipher getCipherEncrypt() {
-        try {
+    public Cipher getCipherEncrypt() throws InvalidKeyException {
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             return cipher;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+
     }
 
     //EFFECTS: retrieves the cipher in decrypt mode, if invalid private key returns null
-    public Cipher getCipherDecrypt() {
-        try {
+    public Cipher getCipherDecrypt() throws InvalidKeyException {
+
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             return cipher;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+
     }
 
 

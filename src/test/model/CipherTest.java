@@ -1,6 +1,8 @@
 package model;
 
 
+import exceptions.PrivateKeyException;
+import exceptions.PublicKeyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,6 +49,14 @@ public class CipherTest {
             "371225022910638428246408971231854925482678287039361709514340857595506171547987055983357037322558707132" +
             "977" +
             "6833";
+
+    String invalidPub = "17250996A64411591914539129084015705832284460398449270610431346579736693972224842801244" +
+            "830918811503224924767850315558126854728329135498341443650291972504356345600828837678531646034371829" +
+            "6371954269979477529251575253327565679488473976851457133804662674062905594732456851873808205007432128" +
+            "484268830299539762727274686617461753605492350254093920059992869533607124087568435493504495168703003769" +
+            "2469281864262350251552219968228813262309071705493496733573345649689319076725809161376012952520912045357" +
+            "12794934251754854160812632841115537694273901696651807964258180283984789519088519678898350830291269234762" +
+            "9528387788010141323829A";
 
 
     @BeforeEach
@@ -104,7 +114,7 @@ public class CipherTest {
 
     // checks to make sure it will only validate keys that are a pair.
     @Test
-    void validPairTest() {
+    void validPairTest() throws PublicKeyException, PrivateKeyException {
 
         testObj.genKeyPair("RSA");
         try {
@@ -130,54 +140,59 @@ public class CipherTest {
     }
 
     @Test
-    void createPublicKeyTest() {
+    void createPublicKeyTest() throws PublicKeyException {
         try {
-            invalidCipher.createPublicKey(null);
-        } catch (Exception e) {
+            invalidCipher.createPublicKey("fdsf4d");
+            fail("Invalid public key string, exception should have been thrown ");
+        } catch (PublicKeyException e) {
+            //Pass
         }
         try {
             testObj.createPublicKey(pubkey1);
-        } catch (Exception e) {
-            fail("Invalid public Key");
+        } catch (PublicKeyException e) {
+            fail("valid public key string, no expected exception ");
         }
 
-        // Null test
-        assertNull(testObj.createPublicKey(null));
         // Valid key test
         assertNotNull(testObj.createPublicKey(pubkey1));
         // Invalid/incorrect format string input
-        assertNull(testObj.createPublicKey("Fdsffdsaf"));
 
-        // invalid key creation
-        invalidCipher.createPublicKey("dsafwdsds");
+        // invalid key creation of correct length
+        try {
+            invalidCipher.createPublicKey(invalidPub);
 
-        // tests that key that should be valid can encrypt
-        assertNotNull(testObj.encryptText("tttest"));
-        //tests that invalid key cant encrypt
-        assertNull(invalidCipher.encryptText("test"));
+            // tests that key that should be valid can encrypt
+            assertNotNull(testObj.encryptText("tttest"));
+            fail("Correct length but invalid key should throw exception");
+
+        } catch (PublicKeyException e) {
+            //Pass
+        }
     }
 
     @Test
-    void createPrivateKeyTest() throws Exception {
+    void createPrivateKeyTest() throws PrivateKeyException, NoSuchPaddingException, NoSuchAlgorithmException {
 
+        // Invalid  length modulus & exponent tests
         try {
-            invalidCipher.createPrivateKey("invalid Modulus", "invalid exp");
+            invalidCipher.createPrivateKey("32424352346544445", privExp);
+            fail("Invalid private Modulus, should throw exception");
         } catch (Exception e) {
+            //Pass
         }
         try {
-            testObj.createPublicKey(pubkey1);
-        } catch (Exception e) {
+            testObj.createPrivateKey(privMod, "4343533344344334");
             fail("Invalid Private key modulus or exponent");
+        } catch (Exception e) {
+            //Pass
         }
 
-        CipherObj testObj2 = new CipherObj();
-        // test key data
-        assertNull(testObj.createPrivateKey(null, "33243"));
-        assertNull(testObj.createPrivateKey("Fdsffdsaf", "43253"));
-        assertNotNull(testObj.createPrivateKey(privMod, privExp));
-        testObj.createPublicKey(pubkey1);
-        SealedObject test = testObj.encryptText("Test");
-        assertNull(testObj2.decryptText(test));
+        try {
+            testObj.createPrivateKey(privMod,privExp);
+        } catch (PrivateKeyException e) {
+            fail("valid key, exception not expected");
+        }
+
     }
 
     @Test

@@ -16,9 +16,7 @@ public class Account implements Writable {
     private String userid;
     private int cipherId;
     private List<CipherObj> userCiphers = new ArrayList<>();
-    private List<List<SealedObject>> encryptedMsgs = new ArrayList<>();
-    private JsonReader jsonReader;
-    private JsonWriter jsonWriter;
+
 
     //EFFECTS: Constructs a new account with 1 cipherobj
     public Account(String id) {

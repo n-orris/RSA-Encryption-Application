@@ -1,6 +1,7 @@
 package ui;
 
 
+import exceptions.PublicKeyException;
 import model.Account;
 import model.CipherObj;
 import persistence.JsonReader;
@@ -11,6 +12,7 @@ import javax.crypto.SealedObject;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -170,13 +172,18 @@ public class UserInteraction {
 
     //EFFECTS: prompts user to enter public key then message, encrypts message and displays it
     public void encryptWithPublic() {
-        System.out.println("Please enter public modulus for encryption");
-        String pubKey = consoleScanner.nextLine();
-        System.out.println("Plese Enter message to encrypt:");
-        String plainText = consoleScanner.nextLine();
-        cipherObj.createPublicKey(pubKey);
-        cipherObj.encryptText(plainText);
-        keyOptions();
+        try {
+            System.out.println("Please enter public modulus for encryption");
+            String pubKey = consoleScanner.nextLine();
+            System.out.println("Plese Enter message to encrypt:");
+            String plainText = consoleScanner.nextLine();
+            cipherObj.createPublicKey(pubKey);
+            cipherObj.encryptText(plainText);
+            keyOptions();
+        } catch (PublicKeyException e) {
+            System.out.println("Invalid public key, Please create a valid one");
+            keyOptions();
+        }
     }
 
     // Code is part of P2!!
