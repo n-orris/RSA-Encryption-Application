@@ -222,6 +222,7 @@ public class CipherObj implements Writable {
         }
     }
 
+    // EFFECTS: returns a json object of the Cipher
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();

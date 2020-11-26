@@ -46,5 +46,10 @@ Phase 4: Task 2: Implemented robust design in CipherObject class
 - PrivateKeyException: createPrivateKey, getCipherDecrypt, decryptText
 - PublicKeyException: createPublicKey, getCipherEncrypt, encryptText
 - NoSuchAlgorithmException & NoSuchPaddingException: Constructor & genKeyPair throws JCA exceptions if invalid encryp
-  
+
+Phase 4: Task 3:
+- I would remove the field of Cipherobj in userInteraction and directly use the accounts current cipher instead of 
+always setting the current account cipher to the CipherObj field. This would get rid of the association of 
+userInteraction with Cipherobj.
+- I would refactor my 3 GUIs into one to avoid having too many windows and a small UML diagram 
 

@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+// A gui window to display the users keys
 public class UserKeysPanel extends JFrame implements ActionListener {
     private JFrame frame;
     private JPanel panel;
@@ -40,7 +41,8 @@ public class UserKeysPanel extends JFrame implements ActionListener {
     }
 
 
-
+    //MODIFIES: this
+    //EFFECTS: Adds the textfield entries the user's keys to the frame
     public void postKeys() {
         if (!keys) {
             textField.append(account.getAccountCipher().getPublicKey().toString());
@@ -69,6 +71,7 @@ public class UserKeysPanel extends JFrame implements ActionListener {
     }
 
 
+    // unused default actionperformed method
     @Override
     public void actionPerformed(ActionEvent e) {
 

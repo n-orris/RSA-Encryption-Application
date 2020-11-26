@@ -3,9 +3,10 @@ package ui;
 
 // Encryption program main class
 public class Main {
-    public static void main(String[] args) throws Exception {
+    private static UserInteraction userInteraction;
 
-        UserInteraction userInteraction = new UserInteraction();
+    public static void main(String[] args) throws Exception {
+        userInteraction = new UserInteraction();
     }
 
 }
