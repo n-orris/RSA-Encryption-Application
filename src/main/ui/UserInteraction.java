@@ -1,6 +1,8 @@
 package ui;
 
 
+import exceptions.InvalidKeyPairException;
+import exceptions.PrivateKeyException;
 import exceptions.PublicKeyException;
 import model.Account;
 import model.CipherObj;
@@ -244,30 +246,41 @@ public class UserInteraction {
     //          encrypted message in console
     public void encrypt() {
 
-        System.out.println("Please enter Message you would like to encrypt:");
-        String msg = consoleScanner.nextLine();
-        if (account == null) {
-            cipherObj.encryptText(msg);
-        } else {
-            account.getAccountCipher().encryptText(msg);
+        try {
+
+            System.out.println("Please enter Message you would like to encrypt:");
+            String msg = consoleScanner.nextLine();
+            if (account == null) {
+                cipherObj.encryptText(msg);
+            } else {
+                account.getAccountCipher().encryptText(msg);
+            }
+            keyOptions();
+        } catch (PublicKeyException e) {
+            System.out.println(e.getMessage());
+            keyOptions();
         }
-        keyOptions();
     }
 
     //EFFECTS: Decrypts a sealed object, if no existing private key, prompts user to enter a key for decryption
     public void decrypt() {
-        if (account == null) {
-            for (SealedObject sobj : cipherObj.getEncryptedMsgs()) {
-                System.out.println(cipherObj.decryptText(sobj));
-            }
-        } else {
-            List<SealedObject> msgs = account.getAccountCipher().getEncryptedMsgs();
+        try {
+            if (account == null) {
+                for (SealedObject sobj : cipherObj.getEncryptedMsgs()) {
+                    System.out.println(cipherObj.decryptText(sobj));
+                }
+            } else {
+                List<SealedObject> msgs = account.getAccountCipher().getEncryptedMsgs();
 
-            for (SealedObject obj : msgs) {
-                System.out.println(account.getAccountCipher().decryptText(obj));
+                for (SealedObject obj : msgs) {
+                    System.out.println(account.getAccountCipher().decryptText(obj));
+                }
             }
+            keyOptions();
+        } catch (PrivateKeyException e) {
+            System.out.println(e.getMessage());
+            keyOptions();
         }
-        keyOptions();
     }
 
     //EFFECTS: Displays current keypair to console, null if no keypair
@@ -286,33 +299,44 @@ public class UserInteraction {
     //EFFECTS: creates an account for the user with the current cipherObj,encrypted msgs list and a username.
     // If invalid keypair it prints error msg.Both options return to key menu
     public void createAccount() {
-        if (cipherObj.validPair(cipherObj.getPublicKey(), cipherObj.getPrivateKey())) {
-            System.out.println("Please enter username");
-            String user = consoleScanner.nextLine();
-            account = new Account(user);
-            account.newCipher(cipherObj);
-            System.out.println("Account created succesfully");
-            System.out.println();
+        try {
+            if (cipherObj.validPair(cipherObj.getPublicKey(), cipherObj.getPrivateKey())) {
+                System.out.println("Please enter username");
+                String user = consoleScanner.nextLine();
+                account = new Account(user);
+                account.newCipher(cipherObj);
+                System.out.println("Account created succesfully");
+                System.out.println();
+            }
+        } catch (InvalidKeyPairException e) {
+            System.out.println(e.getMessage());
         }
     }
 
+
     //EFFECTS: Adds the current cipher object to an account, if no existing account warns user and returns to options
-    public void addCipher() throws NoSuchPaddingException, NoSuchAlgorithmException {
-        if (account == null) {
-            System.out.println("No account, Please create an account");
+    public void addCipher() {
+        try {
+            if (account == null) {
+                System.out.println("No account, Please create an account");
+                keyOptions();
+            } else {
+                CipherObj nm = new CipherObj();
+                nm.genKeyPair("RSA");
+                account.newCipher(nm);
+                int size = account.getCipherSize();
+                account.useCipher(size);
+                System.out.println(account.getAccountCipher());
+                System.out.println("Your cipher object was insert as cipher # " + size);
+                System.out.println("To retrieve this cipher, remember its #");
+                account.useCipher(size);
+                account.getAccountCipher();
+                System.out.println("Now set to new cipher");
+                keyOptions();
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             keyOptions();
-        } else {
-            CipherObj nm = new CipherObj();
-            nm.genKeyPair("RSA");
-            account.newCipher(nm);
-            int size = account.getCipherSize();
-            account.useCipher(size);
-            System.out.println(account.getAccountCipher());
-            System.out.println("Your cipher object was insert as cipher # " + size);
-            System.out.println("To retrieve this cipher, remember its #");
-            account.useCipher(size);
-            account.getAccountCipher();
-            System.out.println("Now set to new cipher");
         }
 
     }

@@ -2,6 +2,7 @@ package model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import exceptions.PublicKeyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +40,7 @@ public class AccountTests {
 
     //
     @Test
-    void removeEncryptionTest() {
+    void removeEncryptionTest() throws PublicKeyException {
         SealedObject testObject = cipherObj.encryptText("Test object for removeEncrypt");
         int beforeSize = account.getAccountCipher().getEncryptedMsgs().size();
         account.removeEncryption(0);
@@ -66,7 +67,7 @@ public class AccountTests {
     }
 
     @Test
-    void removeEncryption() {
+    void removeEncryption() throws PublicKeyException {
         account.getAccountCipher().encryptText("test");
         int before = account.getAccountCipher().getEncryptedMsgs().size();
         account.getAccountCipher().removeEncryption(0);

@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.InvalidKeyPairException;
 import exceptions.PrivateKeyException;
 import exceptions.PublicKeyException;
 import org.json.JSONObject;
@@ -51,7 +52,7 @@ public class CipherObj implements Writable {
             keyPair = keyPairGenerator.generateKeyPair();
             publicKey = keyPair.getPublic();
             privateKey = keyPair.getPrivate();
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
     }
@@ -76,14 +77,9 @@ public class CipherObj implements Writable {
             } else {
                 throw new PublicKeyException("Invalid key string length");
             }
-        } catch (InvalidKeySpecException e) {
-            throw new PublicKeyException("Invalid Public key string, please enter valid key");
-        } catch (NoSuchAlgorithmException e) {
-            throw new PublicKeyException("RSA Algorithm no supported");
-        } catch (NumberFormatException e) {
-            throw new PublicKeyException("Key string should not contain letters");
+        } catch (NumberFormatException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new PublicKeyException("Inproperly formatted public key");
         }
-
     }
 
     //SETS Id for the cipher object
@@ -113,12 +109,8 @@ public class CipherObj implements Writable {
             } else {
                 throw new PrivateKeyException("Invalid key string length");
             }
-        } catch (InvalidKeySpecException e) {
-            throw new PrivateKeyException("Invalid Private key string, please enter valid key");
-        } catch (NoSuchAlgorithmException e) {
-            throw new PrivateKeyException("RSA Algorithm no supported");
-        } catch (NumberFormatException e) {
-            throw new PrivateKeyException("Key string should not contain letters");
+        } catch (NumberFormatException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new PrivateKeyException("Inproperly formatted private key");
         }
     }
 
@@ -173,7 +165,7 @@ public class CipherObj implements Writable {
     //MODIFIES: this
     //EFFECTS: initiates cipher into ENCRYPT_MODE with currently stored publickey, creates a SealedObject with
     //encryption then assigns it to encapsulatedMsg field and returns the object
-    public SealedObject encryptText(String text) {
+    public SealedObject encryptText(String text) throws PublicKeyException {
 
         try {
             // Creates the cipher obj
@@ -185,15 +177,13 @@ public class CipherObj implements Writable {
             return encapsulatedMsg;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new PublicKeyException("Invalid public key, cannot encrypt message");
         }
-
-        return null;
     }
 
     //EFFECTS: initiates cipher into DECRYPT_MODE with currently stored private key, unecrypts the sealed object and
     //return the plaintext string
-    public String decryptText(SealedObject sealedText) {
+    public String decryptText(SealedObject sealedText) throws PrivateKeyException {
 
         try {
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
@@ -202,9 +192,8 @@ public class CipherObj implements Writable {
 
             return msg;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new PrivateKeyException("Invalid private key. cannot decrypt message");
         }
-        return null;
     }
 
 
@@ -212,7 +201,7 @@ public class CipherObj implements Writable {
     // @user Peter Walser
 
     // EFFECTS: returns true if keypair is valid, false otherwise
-    public boolean validPair(PublicKey publicKey, PrivateKey privateKey) {
+    public boolean validPair(PublicKey publicKey, PrivateKey privateKey) throws InvalidKeyPairException {
         try {
             // create a challenge
             byte[] challenge = new byte[10000];
@@ -229,9 +218,8 @@ public class CipherObj implements Writable {
             sig.update(challenge);
             return sig.verify(signature);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new InvalidKeyPairException("Public & private key are not a valid pair");
         }
-        return false;
     }
 
     @Override
