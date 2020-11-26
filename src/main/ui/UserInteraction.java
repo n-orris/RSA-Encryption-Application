@@ -14,7 +14,6 @@ import javax.crypto.SealedObject;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -62,27 +61,22 @@ public class UserInteraction {
     }
 
     //EFFECTS: returns a useraction based of GUI input
-    public void userActions() throws NoSuchAlgorithmException, NoSuchPaddingException, InterruptedException {
-
+    public void userActions() throws InterruptedException {
         while (true) {
             Thread.sleep(2500);
             if (userPanel.getAction("displayKeys")) {
-                System.out.println("Displaying keys....");
-                userKeysPanel = new UserKeysPanel(account);
-                break;
+                userKeysPanel = new UserKeysPanel(account,true);
+                userPanel.reset();
             } else if (userPanel.getAction("setKey")) {
-                System.out.println("Setting Key.....");
                 setCipher();
-                break;
+                userKeysPanel = new UserKeysPanel(account,false);
+                userPanel.reset();
             } else if (userPanel.getAction("addNewKey")) {
-                System.out.println("Adding New Key...");
                 addCipher();
-                openUserPanel();
-                break;
+                userPanel.reset();
             } else if (userPanel.getAction("saveProfile")) {
-                System.out.println("Saving Account...");
                 saveAccount();
-                break;
+                userPanel.reset();
             }
         }
     }
@@ -319,7 +313,6 @@ public class UserInteraction {
         try {
             if (account == null) {
                 System.out.println("No account, Please create an account");
-                keyOptions();
             } else {
                 CipherObj nm = new CipherObj();
                 nm.genKeyPair("RSA");
@@ -332,11 +325,9 @@ public class UserInteraction {
                 account.useCipher(size);
                 account.getAccountCipher();
                 System.out.println("Now set to new cipher");
-                keyOptions();
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            keyOptions();
         }
 
     }
@@ -359,15 +350,20 @@ public class UserInteraction {
 
     //EFFECTS Sets the current Cipher
     public void setCipher() {
-        System.out.println("Please enter id of cipher you would like to use");
-        int id = consoleScanner.nextInt();
+        System.out.println(account.getCiphers().size());
+        System.out.println(account.cipherId);
+
         try {
-            account.useCipher(id);
-            System.out.println("Cipher #" + id + " set");
-            keyOptions();
+            if (account.cipherId  < account.getCiphers().size()) {
+                account.useCipher(account.cipherId + 2);
+                System.out.println("Cipher #" + account.cipherId + " set");
+            } else {
+                account.useCipher(1);
+                System.out.println("Cipher #" + account.cipherId + " set");
+            }
         } catch (Exception e) {
-            System.out.println("Not a valid Cipher, please try again");
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+
         }
     }
 

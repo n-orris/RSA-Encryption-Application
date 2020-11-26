@@ -105,7 +105,13 @@ public class UserPanel extends JFrame implements ActionListener {
         panel.add(setKeypairButton);
         panel.add(addNewCipherObjButton);
         panel.add(saveAccountButton);
+    }
 
+    public void reset() {
+        displayKeys = false;
+        setKey = false;
+        addNewKey = false;
+        saveProfile = false;
 
     }
 

@@ -23,7 +23,7 @@ import java.util.concurrent.ThreadLocalRandom;
 // holds all encryption keys and methods
 public class CipherObj implements Writable {
 
-    KeyPair keyPair;
+    private KeyPair keyPair;
     private PublicKey publicKey;
     private PrivateKey privateKey;
     private Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");// Cipher object used to encrypt/decrypt

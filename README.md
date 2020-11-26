@@ -38,3 +38,13 @@ P2 Stories:
 -As a user, I want to be able to save an account containing my info and keys
 -As a user, I want to be able to enter my userid and use the associated account 
 
+
+Phase 4: Task 2: Implemented robust design in CipherObject class
+
+- Exceptions created: InvalidKeyPairExpection, PrivateKeyException, PublicKeyException
+- InvalidKeyPairException methods: validPair
+- PrivateKeyException: createPrivateKey, getCipherDecrypt, decryptText
+- PublicKeyException: createPublicKey, getCipherEncrypt, encryptText
+- NoSuchAlgorithmException & NoSuchPaddingException: Constructor & genKeyPair throws JCA exceptions if invalid encryp
+  
+

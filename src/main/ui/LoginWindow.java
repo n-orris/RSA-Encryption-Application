@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 public class LoginWindow extends JFrame implements ActionListener {
     private JFrame frame;
     private JPanel panel;
-    private JButton button;
     private JLabel label;
     private boolean logRequest;
     private boolean createAccount = false;

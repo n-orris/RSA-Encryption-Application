@@ -17,12 +17,14 @@ public class UserKeysPanel extends JFrame implements ActionListener {
     private Account account;
     private JTextArea textField;
     private List<CipherObj> cipherObjs;
+    private boolean keys;
 
 
-    public UserKeysPanel(Account account) {
+    public UserKeysPanel(Account account, boolean keys) {
         frame = new JFrame();
         panel = new JPanel();
         label = new JLabel("Options");
+        this.keys = keys;
         textField = new JTextArea();
         this.account = account;
         panel.setBorder(BorderFactory.createEmptyBorder(150, 150, 150, 150));
@@ -38,12 +40,14 @@ public class UserKeysPanel extends JFrame implements ActionListener {
     }
 
 
+
     public void postKeys() {
-        if (account.getCiphers() == null) {
-            textField.setLineWrap(true);
-            textField.setColumns(2);
-            textField.setText("You Do Not Have any Keys");
-        } else {
+        if (!keys) {
+            textField.append(account.getAccountCipher().getPublicKey().toString());
+            textField.append(account.getAccountCipher().getPrivateKey().toString());
+            frame.add(textField);
+
+        } else if (keys) {
             for (CipherObj c : account.getCiphers()) {
                 String privKey = c.getPrivateKey().toString();
                 if (privKey.contains("SunRsaSign")) {

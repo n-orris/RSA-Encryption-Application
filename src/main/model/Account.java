@@ -3,8 +3,6 @@ package model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import persistence.JsonReader;
-import persistence.JsonWriter;
 import persistence.Writable;
 
 import javax.crypto.SealedObject;
@@ -14,7 +12,7 @@ import java.util.List;
 // An account which stores a users information and cypher objects
 public class Account implements Writable {
     private String userid;
-    private int cipherId;
+    public int cipherId;
     private List<CipherObj> userCiphers = new ArrayList<>();
 
 
@@ -50,7 +48,7 @@ public class Account implements Writable {
 
 
     public CipherObj getAccountCipher() {
-        return userCiphers.get(cipherId);
+        return userCiphers.get(cipherId - 1);
     }
 
     public int getCipherSize() {
