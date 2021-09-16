@@ -1,5 +1,5 @@
 # **ULock**
-## **Project built in CPSC 210 (Software Construction)
+### **Project built in CPSC 210 (Software Construction)**
   ______
   /  __  \     _    _    _   _
  |  |  |  \___| |__| |__| | / | 
