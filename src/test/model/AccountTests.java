@@ -73,6 +73,7 @@ public class AccountTests {
         account.getAccountCipher().removeEncryption(0);
         assertEquals(before - 1, account.getAccountCipher().getEncryptedMsgs().size());
 
+
         try {
             CipherObj cipher2 = new CipherObj();
             account.newCipher(cipher2);
