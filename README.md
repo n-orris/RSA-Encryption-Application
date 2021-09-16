@@ -1,12 +1,8 @@
 # **ULock**
 ### **Project built in CPSC 210 (Software Construction)**
-  ______
-  /  __  \     _    _    _   _
- |  |  |  \___| |__| |__| | / | 
- |  |__|   ___________________|
-  \______/
 
- 
+
+
 Provides services involving encryption/decryption and storage of secure messages, files, and keys.
 Utilizing the Java Cryptography architecture (JCA) and several external libraries users will be able to:
 
